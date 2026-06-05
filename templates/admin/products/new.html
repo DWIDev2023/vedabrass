@@ -1,0 +1,139 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Add New Product{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Add New Product</h2>
+
+            <form class="category-form" method="POST" action="{% url 'AdminAddProduct' user.unique_code %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="productName" name="name" placeholder="Enter product name" required />
+                </div>
+                <div class="form-group">
+                    <label>Slug</label>
+                    <input type="text" id="productSlug" name="slug" placeholder="Auto-generated or custom slug" required />
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="category" name="category">
+                        <option value="" hidden>Select Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subcategory</label>
+                    <select id="subcategory" name="subcategory">
+                        <option value="" hidden>Select Subcategory</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Collection</label>
+                    <select id="collection" name="collection">
+                        <option value="" hidden>Select Collection</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Product Vendor</label>
+                    <select name="vendor">
+                        <option value="" hidden>Select Vendor</option>
+                        {% for vendor in vendors %}
+                        <option value="{{ vendor.id }}">{{ vendor.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tags</label>
+                    <select class="select2" id="tags" name="tags" multiple>
+                        <option value="" hidden>Select Tags</option>
+                        {% for tag in tags %}
+                        <option value="{{ tag.id }}">{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="text" step="0.01" name="price" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Discount Price</label>
+                    <input type="text" step="0.01" name="discount_price" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Brand</label>
+                    <input type="text" name="brand" placeholder="Enter brand name" value="Vedabrass" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="is_active" required>
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Weight</label>
+                    <input type="text" step="0.01" name="weight" placeholder="kg">
+                </div>
+                <div class="form-group">
+                    <label>Height</label>
+                    <input type="text" step="0.01" name="height" placeholder="in">
+                </div>
+                <div class="form-group">
+                    <label>Width</label>
+                    <input type="text" step="0.01" name="width" placeholder="in">
+                </div>
+                <div class="form-group full">
+                    <label>Description</label>
+                    <textarea rows="4" name="description" placeholder="Write a short description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="text" name="quantity" placeholder="Available stock">
+                </div>
+
+                <div class="form-group">
+                    <label>Low Stock Threshold</label>
+                    <input type="text" name="low_stock_threshold" value="5">
+                </div>
+                <div class="form-group full">
+                    <label>Product Images</label>
+                    <div class="product-image-upload">
+                        <input type="file" id="productImages" name="images" accept="image/*" multiple hidden>
+                        <div class="product-upload-box" id="productUploadBox">
+                            <span>Click to upload or drag & drop</span>
+                            <small>Only JPG 500x400 Resolution</small>
+                        </div>
+                        <div class="product-multi-image-preview" id="multiImagePreview"></div>
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label>Product Attributes</label>
+                    <div id="attributeWrapper">
+                        <div class="attribute-row">
+                            <input type="text" name="attribute_name[]" placeholder="Attribute name e.g. Material">
+                            <input type="text" name="attribute_value[]" placeholder="Value e.g. Cotton">
+                        </div>
+                    </div>
+                    <button type="button" class="btn-secondary" id="addAttributeBtn">+ Add Attribute</button>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

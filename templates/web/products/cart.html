@@ -1,0 +1,90 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Cart</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Cart</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="cart-section">
+        <div class="cart-container">
+            <div class="cart-header">
+                <h1>Shopping Cart</h1>
+                <p>Review your selected products before checkout.</p>
+            </div>
+
+            {% if cart_items %}
+            <div class="cart-layout">
+                <div class="cart-items">
+                    {% for item in cart_items %}
+                    <div class="cart-item">
+                        <div class="cart-product">
+                            {% if item.product.ordered_images %}
+                                <img src="{{ item.product.ordered_images.0.image.url }}" alt="{{ item.product.ordered_images.0.alt_text|default:item.product.name }}">
+                            {% endif %}
+                            <div>
+                                <h3>{{ item.product.name }}</h3>
+                                <p>Code: {{ item.product.product_code }}</p>
+
+                                <a href="{% url 'ProductDetails' item.product.slug %}">View Product</a>
+                            </div>
+                        </div>
+
+                        <div class="cart-price">
+                            {% if item.product.discount_price %}
+                                ₹{{ item.product.discount_price|intcomma }}
+                            {% else %}
+                                ₹{{ item.product.price|intcomma }}
+                            {% endif %}
+                        </div>
+
+                        <div class="cart-qty">
+                            <button class="cart-minus" data-id="{{ item.id }}">-</button>
+                            <input type="text" value="{{ item.quantity }}" id="qty-{{ item.id }}" readonly>
+                            <button class="cart-plus" data-id="{{ item.id }}">+</button>
+                        </div>
+
+                        <div class="cart-total" id="item-total-{{ item.id }}">₹{{ item.total|intcomma }}</div>
+                        
+                        <button class="cart-remove" data-id="{{ item.id }}"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <aside class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <strong id="cartSubtotal">₹{{ subtotal }}</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <strong>Calculated at checkout</strong>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <strong id="cartTotal">₹{{ total|intcomma }}</strong>
+                    </div>
+                    <a href="{% url 'CheckOut' %}" class="checkout-btn">Proceed to Checkout</a>
+                    <a href="{% url 'Products' %}" class="continue-btn">Continue Shopping</a>
+                </aside>
+            </div>
+            {% else %}
+            <div class="empty-cart">
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added anything yet.</p>
+
+                <a href="{% url 'Products' %}" class="checkout-btn">Start Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

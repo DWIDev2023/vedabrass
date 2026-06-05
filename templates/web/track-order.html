@@ -1,0 +1,104 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Track Order</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Track Order</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="track-section">
+        <div class="track-container">
+            <div class="track-header">
+                <span class="section-tag">Order Status</span>
+                <h1>Track Your Order</h1>
+                <p>Enter your order ID below or view the status directly from your order confirmation page.</p>
+            </div>
+
+            <form method="POST" class="track-search-card">
+                {% csrf_token %}
+                <input type="text" name="order_id" placeholder="Enter Order ID" value="{% if order %}{{ order.unique_code }}{% endif %}" required>
+                <button type="submit">Track Order</button>
+            </form>
+
+            {% if order %}
+            <div class="track-result-card">
+                <div class="track-result-top">
+                    <div>
+                        <span>Order ID</span>
+                        <h2>#{{ order.unique_code }}</h2>
+                    </div>
+                    <div class="track-status">{{ order.status }}</div>
+                </div>
+
+                <div class="track-info-grid">
+                    <div>
+                        <span>Customer</span>
+                        <strong>{{ order.customer.name }}</strong>
+                    </div>
+                    <div>
+                        <span>Mobile</span>
+                        <strong>{{ order.customer.mobile }}</strong>
+                    </div>
+                    <div>
+                        <span>Order Date</span>
+                        <strong>{{ order.created_at|date:"d M Y" }}</strong>
+                    </div>
+                    <div>
+                        <span>Total</span>
+                        <strong>₹{{ order.total|intcomma }}</strong>
+                    </div>
+                </div>
+
+                <div class="track-steps">
+                    <div class="track-step active">
+                        <span></span>
+                        <p>Pending</p>
+                    </div>
+                    <div class="track-step {% if order.status != 'Pending' %}active{% endif %}">
+                        <span></span>
+                        <p>Confirmed</p>
+                    </div>
+                    <div class="track-step {% if order.status == 'Processing' or order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+                        <span></span>
+                        <p>Processing</p>
+                    </div>
+                    <div class="track-step {% if order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+                        <span></span>
+                        <p>Shipped</p>
+                    </div>
+                    <div class="track-step {% if order.status == 'Delivered' %}active{% endif %}">
+                        <span></span>
+                        <p>Delivered</p>
+                    </div>
+                </div>
+
+                <div class="tracked-items">
+                    <h3>Ordered Items</h3>
+
+                    {% for item in order.items.all %}
+                    <div class="tracked-item">
+                        {% if item.product.ordered_images %}
+                        <img src="{{ item.product.ordered_images.0.image.url }}" alt="{{ item.product.ordered_images.0.alt_text|default:item.product.name }}">
+                        {% endif %}
+
+                        <div>
+                            <h4>{{ item.product.name }}</h4>
+                            <p>Qty: {{ item.quantity }}</p>
+                        </div>
+                        <strong>₹{{ item.total|intcomma }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

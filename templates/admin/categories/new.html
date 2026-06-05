@@ -1,0 +1,69 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Add New Category{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Add New Category</h2>
+
+            <form class="category-form" method="POST" action="{% url 'AdminNewCategory' user.unique_code %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="categoryName" name="name" placeholder="Enter category name" required />
+                </div>
+                <div class="form-group">
+                    <label>Slug</label>
+                    <input type="text" id="categorySlug" name="slug" placeholder="Auto-generated or custom slug" required />
+                </div>
+                <div class="form-group full">
+                    <label>Category Image</label>
+                    <div class="category-image-upload">
+                        <input type="file" id="categoryImageInput" name="image" accept="image/*" hidden required>
+                        <div class="category-upload-box" id="categoryImageBox">
+                            <span>Click to upload or drag & drop</span>
+                            <small>Only JPG 500x400</small>
+                        </div>
+                        <div class="category-image-preview" id="categoryImagePreview">
+                            <img id="categoryPreviewImg" src="" alt="Preview">
+                            <button type="button" id="categoryImageRemove">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label>Description</label>
+                    <textarea rows="4" name="description" placeholder="Write a short description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Parent Category</label>
+                    <select name="parent">
+                        <option value="None" selected>None</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="is_active" required>
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

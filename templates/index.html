@@ -1,0 +1,519 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="hero">
+        <div class="hero-slider" id="heroSlider">
+            <div class="slide">
+                <picture>
+                    <source media="(max-width:768px)" srcset="{% static 'front/images/banners/mobbanner1.jpg' %}">
+                    <img src="{% static 'front/images/banners/banner1.jpg' %}" alt="">
+                </picture>
+            </div>
+            <div class="slide">
+                <picture>
+                    <source media="(max-width:768px)" srcset="{% static 'front/images/banners/mobbanner2.jpg' %}">
+                    <img src="{% static 'front/images/banners/banner2.jpg' %}" alt="">
+                </picture>
+            </div>
+            <div class="slide">
+                <picture>
+                    <source media="(max-width:768px)" srcset="{% static 'front/images/banners/mobbanner3.jpg' %}">
+                    <img src="{% static 'front/images/banners/banner3.jpg' %}" alt="">
+                </picture>
+            </div>
+        </div>
+
+        <button class="hero-btn prev" onclick="moveSlide(-1)"><i class="fa-solid fa-long-arrow-left"></i></button>
+        <button class="hero-btn next" onclick="moveSlide(1)"><i class="fa-solid fa-long-arrow-right"></i></button>
+
+        <div class="hero-dots" id="heroDots"></div>
+    </section>
+
+    <section class="category-section">
+        <div class="section-title">
+            <h1>Explore Our Collections</h1>
+            <p>Carefully curated pieces for every space, tradition, and occasion</p>
+        </div>
+        <div class="category-grid">
+            <div class="cat-card cat-large">
+                <img src="{% static 'front/images/categories/idols.jpg' %}" alt="">
+                <div class="overlay"></div>
+                <div class="content">
+                    <h2>Idols &amp; Statues</h2>
+                    <a href="{% url 'ProductsByCategory' 'idols-and-statues' %}" class="btn">Explore</a>
+                </div>
+            </div>
+            <div class="cat-card cat-wide">
+                <img src="{% static 'front/images/categories/kitchen.jpg' %}" alt="">
+                <div class="overlay"></div>
+                <div class="content">
+                    <h3>Kitchen Essentials</h3>
+                    <a href="{% url 'ProductsByCategory' 'kitchen-essentials' %}" class="btn">Explore</a>
+                </div>
+            </div>
+            <div class="cat-card cat-wide">
+                <img src="{% static 'front/images/categories/home.jpg' %}" alt="">
+                <div class="overlay"></div>
+                <div class="content">
+                    <h3>Home Decor</h3>
+                    <a href="{% url 'ProductsByCategory' 'home-decor' %}" class="btn">Explore</a>
+                </div>
+            </div>
+            <div class="cat-card">
+                <img src="{% static 'front/images/categories/puja.jpg' %}" alt="">
+                <div class="overlay"></div>
+                <div class="content">
+                    <h4>Pooja Essentials</h4>
+                    <a href="{% url 'ProductsByCategory' 'pooja-essentials' %}" class="btn small">Explore</a>
+                </div>
+            </div>
+            <div class="cat-card">
+                <img src="{% static 'front/images/categories/gifts.jpg' %}" alt="">
+                <div class="overlay"></div>
+                <div class="content">
+                    <h4>Gifting Items</h4>
+                    <a href="{% url 'ProductsByCategory' 'gifting-items' %}" class="btn small">Explore</a>
+                </div>
+            </div>
+            <div class="cat-card">
+                <img src="{% static 'front/images/categories/new.jpg' %}" alt="">
+                <div class="overlay"></div>
+                <div class="content">
+                    <h4>New Arrivals</h4>
+                    <a href="{% url 'ProductsByCategory' 'new-arrivals' %}" class="btn small">Explore</a>
+                </div>
+            </div>
+            <div class="cat-card">
+                <img src="{% static 'front/images/categories/premium.jpg' %}" alt="">
+                <div class="overlay"></div>
+                <div class="content">
+                    <h4>Premium Collection</h4>
+                    <a href="{% url 'ProductsPremiumCollection' %}" class="btn small">Explore</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section">
+        <div class="section-title">
+            <h2>Our Top Trending Products</h2>
+            <p>Here's some of our most loved handcrafted creations</p>
+        </div>
+
+        <div class="products-grid">
+            {% for trend in trending_products %}
+            <div class="product-card">
+                <div class="product-media">
+                    {% if trend.discount_price and trend.discount_price < trend.price %}
+                    <span class="product-discount">
+                        {{ trend.discount_percentage }}% OFF
+                    </span>
+                    {% endif %}
+                    <a href="{% url 'ProductDetails' trend.slug %}">
+                        {% if trend.ordered_images %}
+                        <img src="{{ trend.ordered_images.0.image.url }}" alt="{{ trend.ordered_images.0.alt_text|default:trend.name }}">
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'ProductDetails' trend.slug %}" class="quick-view">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ trend.collection.name }}</span>
+                    <h3>{{ trend.name }}</h3>
+                    <div class="price">
+                        {% if trend.discount_price and trend.discount_price < trend.price %}
+                        <span class="old">₹{{ trend.price|intcomma }}</span>
+                        <span class="new">₹{{ trend.discount_price|intcomma }}</span>
+                        {% else %}
+                        <span class="new">₹{{ trend.price|intcomma }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-footer">
+                        <a href="{% url 'ProductDetails' trend.slug %}">View Details</a>
+                        <button class="add-to-cart-btn" data-slug="{{ trend.unique_code }}">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="product-cta">
+            <a href="{% url 'Products' %}" class="view-all-btn">View All Products <i class="fa-solid fa-long-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <section class="gifting-section">
+        <div class="section-title">
+            <span>Curated Collections</span>
+            <h2>Gifting That Leaves a Lasting Impression</h2>
+            <p>Thoughtfully curated gifting solutions for every special occasion.</p>
+        </div>
+        <div class="gifting-grid">
+            <div class="gifting-card">
+                <div class="gifting-image">
+                    <img src="{% static 'front/images/corporate.jpg' %}" alt="">
+                </div>
+                <div class="gifting-content">
+                    <span>Bulk Orders</span>
+                    <h3>Corporate Gifting</h3>
+                    <p>Premium brass gifts and spiritual décor curated for clients, employees and festive celebrations.</p>
+                    <a href="{% url 'Collections' 'corporate-gifting' %}">Explore Collection <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="gifting-card">
+                <div class="gifting-image">
+                    <img src="{% static 'front/images/festive.jpg' %}" alt="">
+                </div>
+                <div class="gifting-content">
+                    <span>Festive Specials</span>
+                    <h3>Festive Gifting</h3>
+                    <p>Celebrate festivals with handcrafted gifting collections inspired by tradition.</p>
+                    <a href="{% url 'Collections' 'festival-gifts' %}">Shop Festive Gifts <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="gifting-card">
+                <div class="gifting-image">
+                    <img src="{% static 'front/images/occasion.jpg' %}" alt="">
+                </div>
+                <div class="gifting-content">
+                    <span>Meaningful Gifts</span>
+                    <h3>Special Occasion Gifting</h3>
+                    <p>Elegant brass idols and décor perfect for weddings, anniversaries and housewarmings.</p>
+                    <a href="{% url 'Collections' 'special-occassion-gifts' %}">Explore Gifts <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section">
+        <div class="section-title">
+            <h2>New Arrivals</h2>
+            <p>New creations inspired by tradition, crafted for modern living.</p>
+        </div>
+
+        <div class="products-grid">
+            {% for new in new_products %}
+            <div class="product-card">
+                <div class="product-media">
+                    {% if new.discount_price and new.discount_price < new.price %}
+                    <span class="product-discount">
+                        {{ new.discount_percentage }}% OFF
+                    </span>
+                    {% endif %}
+                    <a href="{% url 'ProductDetails' new.slug %}">
+                        {% if new.ordered_images %}
+                        <img src="{{ new.ordered_images.0.image.url }}" alt="{{ new.ordered_images.0.alt_text|default:new.name }}">
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'ProductDetails' new.slug %}" class="quick-view">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ new.collection.name }}</span>
+                    <h3>{{ new.name }}</h3>
+                    <div class="price">
+                        {% if new.discount_price and new.discount_price < new.price %}
+                        <span class="old">₹{{ new.price|intcomma }}</span>
+                        <span class="new">₹{{ new.discount_price|intcomma }}</span>
+                        {% else %}
+                        <span class="new">₹{{ new.price|intcomma }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-footer">
+                        <a href="{% url 'ProductDetails' new.slug %}">View Details</a>
+                        <button class="add-to-cart-btn" data-slug="{{ new.unique_code }}">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="product-cta">
+            <a href="{% url 'Products' %}" class="view-all-btn">View All Products <i class="fa-solid fa-long-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <section class="alchemy-section">
+        <div class="particles"></div>
+        <div class="alchemy-container">
+            <div class="alchemy-image">
+                <img src="{% static 'front/images/alchemy.jpg' %}" alt="">
+            </div>
+            <div class="alchemy-info">
+                <span class="alchemy-tag">Superfine Brass</span>
+                <h2>The Alchemy of Superfine Brass</h2>
+                <p>Crafted from premium-grade brass alloy, every creation combines exceptional purity, durability, and timeless elegance.</p>
+                <div class="alchemy-features">
+                    <span>Premium Alloy</span>
+                    <span>Hand Finished</span>
+                    <span>Made To Last</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="festive-section">
+        <div class="festive-container">
+            <div class="section-title">
+                <h2>Celebrate the Festive Season</h2>
+                <p>Handpicked idols and decor that bring prosperity, positivity, and timeless elegance.</p>
+            </div>
+            <div class="festive-grid">
+                {% for gift in gift_collections %}
+                <div class="festive-card">
+                    {% if gift.image %}
+                    <img src="{{ gift.image.url }}" alt="{{ gift.name }}">
+                    {% endif %}
+                    <div class="festive-content">
+                        <h3>{{ gift.name }}</h3>
+                        <a href="{% url 'ProductsByCollection' gift.slug %}">Explore</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="festive-bottom">
+                <a href="{% url 'Subcategory' 'gifting-items' %}" class="festive-view-btn">View All Collections</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2 class="shimmer-text">Bring Timeless Elegance Into Your Space</h2>
+            <p>Discover handcrafted brass creations that blend tradition, artistry, and luxury.</p>
+            <div class="cta-actions">
+                <a href="{% url 'Categories' %}" class="btn-primary">Explore Collection</a>
+                <a href="{% url 'Contact' %}" class="btn-secondary">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="special-section">
+        <div class="section-title">
+            <h2>Our Specialities</h2>
+            <p>Crafted with devotion, designed with elegance, and created to bring timeless beauty into every space.</p>
+        </div>
+        <div class="special-grid">
+            <div class="special-card">
+                <div class="card-image">
+                    <img src="{% static 'front/images/tip1.jpg' %}" alt="">
+                </div>
+                <div class="card-content">
+                    <h3>Carefully Crafted Artistry</h3>
+                    <p>Every piece is shaped with precision and attention to detail, preserving authenticity and timeless elegance.</p>
+                </div>
+            </div>
+            <div class="special-card featured">
+                <div class="card-image">
+                    <img src="{% static 'front/images/tip2.jpg' %}" alt="">
+                </div>
+                <div class="card-content">
+                    <h3>Wrapped in Grace</h3>
+                    <p>Elegant finishing and refined presentation create a luxurious experience in every creation.</p>
+                </div>
+            </div>
+            <div class="special-card">
+                <div class="card-image">
+                    <img src="{% static 'front/images/tip3.jpg' %}" alt="">
+                </div>
+                <div class="card-content">
+                    <h3>Empathy in Action</h3>
+                    <p>Thoughtful craftsmanship and care ensure every product feels meaningful and personal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="insta-section">
+        <div class="insta-container">
+            <div class="insta-header">
+                <span>Follow Our Journey</span>
+                <h2>Instagram Reels</h2>
+                <p>Discover our latest creations, craftsmanship moments, styling ideas, and divine décor inspirations.</p>
+            </div>
+            <div class="insta-slider">
+                <div class="insta-track">
+                    <a href="#" class="insta-card">
+                        <img src="img1.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>New Arrival</span>
+                            <h3>Brass Idol Styling</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img2.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Behind The Craft</span>
+                            <h3>Handcrafted Details</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img3.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Home Décor</span>
+                            <h3>Sacred Corners</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img4.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Gifting</span>
+                            <h3>Festive Inspirations</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img5.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Collection</span>
+                            <h3>Timeless Brass Art</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="insta-cta">
+                <a href="#" target="_blank" rel="noopener noreferrer" title="Follow on Instagram">Follow on Instagram <i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="testimonial-wrap">
+            <div class="testimonial-header">
+                <div>
+                    <span>Customer Love</span>
+                    <h2>What Our Customers Say</h2>
+                    <p>Real experiences from people who brought our handcrafted pieces home.</p>
+                </div>
+                <div class="rating-box">
+                    <span class="google">Google</span>
+                    <strong>4.8</strong>
+                    <span class="stars">★★★★★</span>
+                    <span>251 reviews</span>
+                </div>
+            </div>
+            <div class="testimonial-control-row">
+                <button class="testimonial-btn" id="testimonialPrev">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button class="testimonial-btn" id="testimonialNext">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="testimonial-slider" id="testimonialSlider">
+                <div class="testimonial-track">
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>Beautiful pieces</p>
+                        <div class="user">
+                            <div class="avatar">S</div>
+                            <div>
+                                <h4>Anandini Subbu</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>Very warm welcome. Great choices of antique pieces of all sizes.</p>
+                        <div class="user">
+                            <div class="avatar">V</div>
+                            <div>
+                                <h4>Veda Vedarattiname</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>I had a wonderful experience working with Rani Arts.</p>
+                        <div class="user">
+                            <div class="avatar">P</div>
+                            <div>
+                                <h4>Preeti Shankar</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>Beautiful collection and premium finishing. Loved the detailing.</p>
+                        <div class="user">
+                            <div class="avatar">A</div>
+                            <div>
+                                <h4>Anand Kumar</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section stone-section">
+        <div class="section-title">
+            <span>Featured Collection</span>
+            <h2>Stone Idols Collection</h2>
+            <p>Discover handcrafted stone idols designed with timeless artistry, spiritual elegance, and intricate detailing.</p>
+        </div>
+        <div class="products-grid">
+            {% for product in stone_products %}
+            <div class="product-card">
+                <div class="product-media">
+                    {% if product.discount_price and product.discount_price < product.price %}
+                    <span class="product-discount">
+                        {{ product.discount_percentage }}% OFF
+                    </span>
+                    {% endif %}
+                    <a href="{% url 'ProductDetails' product.slug %}">
+                        {% if product.ordered_images %}
+                        <img src="{{ product.ordered_images.0.image.url }}" alt="{{ product.ordered_images.0.alt_text|default:product.name }}">
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'ProductDetails' product.slug %}" class="quick-view">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.collection.name }}</span>
+                    <h3>{{ product.name }}</h3>
+                    <div class="price">
+                        {% if product.discount_price and product.discount_price < product.price %}
+                        <span class="old">₹{{ product.price|intcomma }}</span>
+                        <span class="new">₹{{ product.discount_price|intcomma }}</span>
+                        {% else %}
+                        <span class="new">₹{{ product.price|intcomma }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-footer">
+                        <a href="{% url 'ProductDetails' product.slug %}">View Details</a>
+                        <button class="add-to-cart-btn" data-slug="{{ product.unique_code }}">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="product-cta">
+            <a href="{% url 'ProductsBySubcategory' 'stone-idols' %}" class="view-all-btn">Explore Stone Collection <i class="fa-solid fa-long-arrow-right"></i></a>
+        </div>
+    </section>
+{% endblock %}

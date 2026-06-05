@@ -1,0 +1,71 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Blog Categories{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">Blog Categories</h2>
+                <a href="{% url 'AdminNewBlogCategory' user.unique_code %}" class="btn-primary">+ Add Category</a>
+            </div>
+
+            <input type="text" id="blogCategorySearch" placeholder="Search categories..." class="search-input"/>
+            <div class="category-table">
+                <div class="table-head">
+                    <div>Name</div>
+                    <div>Slug</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                {% for category in categories %}
+                <div class="table-row blog-category-row">
+                    <div>{{ category.name }}</div>
+                    <div>{{ category.slug }}</div>
+                    <div>
+                        {% if category.is_active %}
+                        <span class="status active">Active</span>
+                        {% else %}
+                        <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        <a href="{% url 'AdminEditBlogCategory' category.unique_code %}" class="btn-edit"><i class="fa-solid fa-edit"></i></a>
+                        <a href="#" class="btn-delete" data-id="{{ category.unique_code }}" data-name="{{ category.name }}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row">
+                    <div style="grid-column: span 4; text-align:center;">
+                        No categories found.
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Blog Category</h3>
+                        <p id="deleteText">Are you sure you want to delete this blog category?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteBlogCategory' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="category_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

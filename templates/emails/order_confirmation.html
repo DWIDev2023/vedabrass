@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Order Confirmation</title>
+  </head>
+  <body style="margin: 0;padding: 0;background: #f8f4ee;font-family: Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <table width="700" cellpadding="0" cellspacing="0" style="background: #ffffff;margin: 30px auto;border-radius: 10px;overflow: hidden;">
+            <tr>
+              <td style="background: #442d1c;padding: 30px;text-align: center;color: #fff;">
+                <h1 style="margin: 0">Thank You For Your Order</h1>
+                <p style="margin-top: 10px">Order ID: {{ order.order_id }}</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 30px">
+                <p>Hello {{ customer.name }},</p>
+
+                <p>Thank you for choosing Vedabrass. Your order has been successfully placed.</p>
+                <h3>Order Summary</h3>
+                <table width="100%" cellpadding="8" cellspacing="0" border="1" style="border-collapse: collapse">
+                  <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                  </tr>
+                  {% for item in order_items %}
+                  <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.price }}</td>
+                  </tr>
+                  {% endfor %}
+                </table>
+                <br />
+
+                <p><strong>Subtotal:</strong> ₹{{ order.subtotal }}</p>
+                <p><strong>Shipping:</strong> ₹{{ order.shipping }}</p>
+                <p><strong>Total:</strong> ₹{{ order.total }}</p>
+
+                <p>We will contact you shortly regarding your order.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="background: #442d1c;color: #fff;padding: 20px;text-align: center;">Vedabrass</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

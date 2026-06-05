@@ -1,0 +1,156 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Check Out</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Check Out</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="checkout-section">
+        <div class="checkout-container">
+            <form method="POST" action="{% url 'PlaceOrder' %}" class="checkout-form">
+                {% csrf_token %}
+                <div class="checkout-left">
+                    <div class="checkout-card">
+                        <h2>Customer Details</h2>
+                        <div class="checkout-grid">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mobile</label>
+                                <input type="tel" name="mobile" minlength="10" maxlength="10" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="checkout-grid">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" name="company_name">
+                            </div>
+                            <div class="form-group">
+                                <label>GST Number</label>
+                                <input type="text" name="gst_number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-card">
+                        <h2>Billing Address</h2>
+                        <div class="form-group">
+                            <label>Address Line 1</label>
+                            <input type="text" name="billing_address_line_1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Address Line 2</label>
+                            <input type="text" name="billing_address_line_2">
+                        </div>
+                        <div class="checkout-grid">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" name="billing_city" required>
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" name="billing_state" required>
+                            </div>
+                        </div>
+                        <div class="checkout-grid">
+                            <div class="form-group">
+                                <label>Country</label>
+                                <input type="text" name="billing_country" value="India" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Postal Code</label>
+                                <input type="text" name="billing_postal_code" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-card">
+                        <label class="same-address">
+                            <input type="checkbox" id="sameAsBilling" name="same_as_billing" checked>
+                            Shipping address same as billing address
+                        </label>
+                    </div>
+
+                    <div class="checkout-card" id="shippingAddressBox" style="display:none;">
+                        <h2>Shipping Address</h2>
+                        <div class="form-group">
+                            <label>Address Line 1</label>
+                            <input type="text" name="shipping_address_line_1">
+                        </div>
+                        <div class="form-group">
+                            <label>Address Line 2</label>
+                            <input type="text" name="shipping_address_line_2">
+                        </div>
+                        <div class="checkout-grid">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" name="shipping_city">
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" name="shipping_state">
+                            </div>
+                        </div>
+                        <div class="checkout-grid">
+                            <div class="form-group">
+                                <label>Country</label>
+                                <input type="text" name="shipping_country" value="India">
+                            </div>
+                            <div class="form-group">
+                                <label>Postal Code</label>
+                                <input type="text" name="shipping_postal_code">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="checkout-right">
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        {% for item in cart_items %}
+                        <div class="summary-product">
+                            {% if item.product.ordered_images %}
+                            <img src="{{ item.product.ordered_images.0.image.url }}" alt="{{ item.product.ordered_images.0.alt_text|default:item.product.name }}">
+                            {% endif %}
+
+                            <div>
+                                <h4>{{ item.product.name }}</h4>
+                                <p>Qty: {{ item.quantity }}</p>
+                                <strong>₹{{ item.total|intcomma }}</strong>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <strong>₹{{ subtotal|intcomma }}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <strong>₹{{ shipping|intcomma }}</strong>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <strong>₹{{ total|intcomma }}</strong>
+                        </div>
+                        <button type="submit" class="place-order-btn">Place Order</button>
+                    </div>
+                </aside>
+            </form>
+        </div>
+    </section>
+{% endblock %}

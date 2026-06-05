@@ -1,0 +1,103 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | All Product Collections{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">Category: <a href="{% url 'AdminViewSubcategory' code=user.unique_code slug=category.slug %}">{{ category.name }}</a> <i class="fa-solid fa-long-arrow-right"></i> Subcategory: {{ subcategory.name }}</h2>
+                <a href="{% url 'AdminNewCollection' code=user.unique_code slug1=category.slug slug2=subcategory.slug %}" class="btn-primary">+ Add Collection</a>
+            </div>
+            <div class="category-group">
+                <span class="btn-primary active">Other Subcategories: </span>
+                {% for oscat in subcategories %}
+                <a href="{% url 'AdminViewCollection' code=user.unique_code slug1=category.slug slug2=oscat.slug %}" class="btn-primary">{{ oscat.name }}</a>
+                {% endfor %}
+            </div>
+            <input type="text" id="collectionSearch" placeholder="Search collections..." class="search-input" />
+            <div class="category-table">
+                <div class="table-head">
+                    <div>Name</div>
+                    <div>Slug</div>
+                    <div>Category</div>
+                    <div>Subcategory</div>
+                    <div>Status</div>
+                    <div>Image</div>
+                    <div>Actions</div>
+                </div>
+                {% for cat in collections %}
+                <div class="table-row collection-row">
+                    <div class="name" style="padding-left: {{ cat.level|default:0 }}px;">{{ cat.name }}</div>
+                    <div>{{ cat.slug }}</div>
+                    <div>
+                        {% if cat.category.parent %}
+                            {{ cat.category.parent.name }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if cat.category %}
+                            {{ cat.category.name }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if cat.is_active %}
+                            <span class="status active">Active</span>
+                        {% else %}
+                            <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if cat.image %}
+                            <img src="{{ cat.image.url }}" class="thumb" />
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        {% if cat.category.parent and cat.category.parent.name|lower == "gifting items" %}
+                        <a href="{% url 'AdminAddProductInCollection' cat.unique_code %}" class="btn-products" title="Manage Products"><i class="fa-solid fa-box-open"></i></a>
+                        {% endif %}
+                        <a href="{% url 'AdminEditCollection' cat.unique_code %}" class="btn-edit"><i class="fa-solid fa-edit"></i></a>
+                        <a href="#" data-id="{{ cat.unique_code }}" data-name="{{ cat.name }}" class="btn-delete"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row">
+                    <div style="grid-column: 1 / -1; text-align:center; color:var(--text-muted)">
+                    No subcategories found.
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Collection</h3>
+                        <p id="deleteText">Are you sure you want to delete this collection?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteCollection' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="collection_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

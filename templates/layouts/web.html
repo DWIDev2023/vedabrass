@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ meta_description|default:'' }}">
+    <meta name="keywords" content="{{ meta_keywords|default:'' }}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="author" content="Doc Web India">
+    <title>{{ meta_title|default:'' }}</title>
+
+    <meta property="og:url" content="" />
+    <meta property="og:site_name" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ meta_title|default:'' }}" />
+    <meta property="og:description" content="{{ meta_description|default:'' }}" />
+    <meta property="og:image" content="" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="" />
+    <meta property="twitter:url" content="" />
+    <meta name="twitter:title" content="{{ meta_title|default:'' }}" />
+    <meta name="twitter:description" content="{{ meta_description|default:'' }}" />
+    <meta name="twitter:image" content="" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'front/images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'front/images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'front/images/favicon.png' %}">
+    <link rel="canonical" href="" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'front/css/styling.css' %}">
+</head>
+<body>
+    <header>
+        <div class="topbar">
+            <div class="topbar-inner">
+                <span>FREE DELIVERY PAN INDIA. COD AVAILABLE NOW</span>
+                <span>SAME DAY DELIVERY AVAILABLE IN HYDERABAD</span>
+                <span>FREE BRASS GIFT ON ORDERS ABOVE ₹5,000!</span>
+                <span>FREE DELIVERY PAN INDIA. COD AVAILABLE NOW</span>
+            </div>
+        </div>
+
+        <div class="navbar" id="navbar">
+            <div class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            <a href="{% url 'Welcome' %}" class="logo">
+                <img src="{% static 'front/images/logo.png' %}" alt="Logo">
+            </a>
+
+            <div class="nav-links" id="nav">
+                <div class="nav-item"><a href="{% url 'Welcome' %}">Home</a></div>
+                <div class="nav-item">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Idols &amp; Statues</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="mega">
+                        <div class="mega-grid idols-mega-grid">
+                            <div class="mega-column god-column">
+                                <h4>Shop By God</h4>
+                                <div class="god-links">
+                                    {% for item in menu_gods %}
+                                    <a href="{% url 'ProductsByCollection' item.slug %}">{{ item.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mega-column">
+                                <h4>Shop By Goddess</h4>
+                                {% for item in menu_goddess %}
+                                <a href="{% url 'ProductsByCollection' item.slug %}">{{ item.name }}</a>
+                                {% endfor %}
+                            </div>
+                            <div class="mega-column">
+                                <h4>Popular</h4>
+                                {% for item in menu_popular %}
+                                <a href="{% url 'Collections' item.slug %}">{{ item.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Home Decor</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        {% for item in menu_home_decore %}
+                        <a href="{% url 'ProductsBySubcategory' item.slug %}">{{ item.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Pooja Essentials</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        {% for item in menu_pooja_essentials %}
+                        <a href="{% url 'ProductsBySubcategory' item.slug %}">{{ item.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Kitchen Essentials</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        {% for item in menu_home_essentials %}
+                        <a href="{% url 'ProductsBySubcategory' item.slug %}">{{ item.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>More</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'ProductsByCategory' 'gifting-items' %}">Gifting Items</a>
+                        <a href="{% url 'ProductsByCategory' 'new-arrivals' %}">New Arrivals</a>
+                    </div>
+                </div>
+            </div>
+            <div class="icons">
+                <a href="javascript:void(0);" class="icon" id="searchTrigger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </a>
+                <a href="{% url 'TrackOrder' None %}" class="icon"><i class="fa-regular fa-user"></i></a>
+                <a href="{% url 'Carts' %}" class="icon"><i class="fa-solid fa-bag-shopping"></i><span class="count" id="cartCount">{{ cart_count|default:0 }}</span></a>
+            </div>
+        </div>
+
+        <div class="subnav-wrapper">
+            <div class="subnav-container">
+                <button class="scroll-btn left" onclick="scrollSubnav(-200)"><i class="fa-solid fa-angle-left"></i></button>
+                <div class="subnav" id="subnav">
+                    <div class="subnav-inner">
+                        <a href="{% url 'ProductsBySubcategory' 'wax-casting-idols' %}">Wax Casting Idols</a>
+                        <a href="{% url 'ProductsBySubcategory' 'wall-decor' %}">Wall Decor</a>
+                        <a href="{% url 'ProductsBySubcategory' 'table-decor' %}">Table Decor</a>
+                        <a href="{% url 'ProductsBySubcategory' 'diyas' %}">Diyas</a>
+                        <a href="{% url 'ProductsBySubcategory' 'kalash' %}">Kalash</a>
+                        <a href="{% url 'ProductsBySubcategory' 'cookware' %}">Cookware</a>
+                        <a href="{% url 'ProductsBySubcategory' 'serveware' %}">Serveware</a>
+                        <a href="{% url 'ProductsBySubcategory' 'drinkware' %}">Drinkware</a>
+                        <a href="{% url 'ProductsBySubcategory' 'corporate-gifting' %}">Corporate Gifting</a>
+                        <a href="{% url 'ProductsBySubcategory' 'festival-gifts' %}">Festival Gifting</a>
+                        <a href="{% url 'ProductsBySubcategory' 'special-occassion-gifts' %}">Special Occasion Gifting</a>
+                    </div>
+                </div>
+                <button class="scroll-btn right" onclick="scrollSubnav(200)"><i class="fa-solid fa-angle-right"></i></button>
+            </div>
+        </div>
+
+        <div class="search-overlay" id="searchOverlay">
+            <div class="close-btn" onclick="closeSearch()"><i class="fa-solid fa-close"></i></div>
+            <div class="search-container">
+                <form class="search-form" method="GET" action="{% url 'SearchProducts' %}">
+                    <div class="search-box">
+                        <input type="text" name="productquery" placeholder="Search for products..." autofocus required/>
+                        <button type="submit" class="search-submit">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <section class="retail-section">
+        <div class="retail-image">
+            <img src="{% static 'front/images/retails.jpg' %}" alt="">
+        </div>
+        <div class="retail-info-card">
+            <span class="retail-label">Visit Our Store</span>
+            <h2>Experience<br/>VedaBrass<br/>In Person</h2>
+            <p>Visit our retail store to explore an inspiring collection of handcrafted brass idols, luxury home decor, spiritual treasures, and premium gifting solutions. Experience the beauty of traditional craftsmanship, exceptional detailing, and timeless designs brought together under one roof.</p>
+
+            <div class="retail-details">
+                <div class="retail-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Hyderabad, Telangana</span>
+                </div>
+                <div class="retail-item">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>11:00 AM - 9:30 PM</span>
+                </div>
+                <div class="retail-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>+91 87124 95444</span>
+                </div>
+            </div>
+            <div class="retail-actions">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="direction-btn" title="Get Directions">Get Directions</a>
+                <a href="{% url 'Contact' %}" class="contact-btn">Contact Store</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col brand">
+                <a href="{% url 'Welcome' %}" class="logo">
+                    <img src="{% static 'front/images/logo.png' %}" alt="Logo"> 
+                </a>
+                <p>We specialize in exquisite brass handicrafts that embody divine beauty and spiritual tranquility.</p>
+                <div class="contact">
+                    <a href="mailto:hello@vedabrass.com">hello@vedabrass.com</a>
+                    <a href="tel:+918712495444">+91 87124 95444</a>
+                </div>
+                <div class="socials">
+                    <a href="#" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="fa-brands fa-facebook" title="Facebook"></i></a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="fa-brands fa-instagram" title="Instagram"></i></a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" title="Linkedin"><i class="fa-brands fa-linkedin" title="Linkedin"></i></a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" title="YouTube"><i class="fa-brands fa-youtube" title="YouTube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="{% url 'Categories' %}">All Categories</a></li>
+                    <li><a href="{% url 'Blogs' %}">Blogs</a></li>
+                    <li><a href="{% url 'Contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'ShippingPolicy' %}">Shipping Policy</a></li>
+                    <li><a href="{% url 'ReturnPolicy' %}">Return Policy</a></li>
+                    <li><a href="{% url 'PrivayPolicy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'TermsUse' %}">Terms &amp; Conditions</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Discover</h4>
+                <ul>
+                    <li><a href="{% url 'WhoWeAre' %}">Who We Are</a></li>
+                    <li><a href="{% url 'Collections' 'idols-and-statues' %}">Idols &amp; Statues</a></li>
+                    <li><a href="{% url 'Collections' 'home-decor' %}">Home Decor</a></li>
+                    <li><a href="{% url 'Collections' 'pooja-essentials' %}">Pooja Essentials</a></li>
+                    <li><a href="{% url 'Collections' 'kitchen-essentials' %}">Kitchen Essentials</a></li>
+                    <li><a href="{% url 'Collections' 'gifting-items' %}">Gifting Items</a></li>
+                    <li><a href="{% url 'Collections' 'new-arrivals' %}">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col newsletter">
+                <h4>Newsletter</h4>
+                <p>Get updates on new collections &amp; offers.</p>
+                <form method="POST" class="newsletter-box" action="{% url 'Subscribe' %}">
+                    {% csrf_token %}
+                    <input type="email" name="semail" placeholder="Enter your email">
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026. All Rights Reserved | Made with <i class="fa-solid fa-heart text-danger"></i> by <a href="https://docwebindia.com/" target="_blank" rel="noopener noreferrer" title="Doc Web India">Doc Web India</a></p>
+        </div>
+    </footer>
+
+    <script src="{% static 'front/js/custom.js' %}"></script>
+</body>
+</html>

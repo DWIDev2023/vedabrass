@@ -1,0 +1,111 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Add New Blog{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="blog-editor-section">
+        <form method="POST" action="{% url 'AdminEditBlog' blog.unique_code %}" enctype="multipart/form-data" class="blog-editor-form">
+            {% csrf_token %}
+            <div class="blog-editor-header">
+                <div>
+                    <span class="editor-label">Blog Writer</span>
+                    <h1>Edit Blog</h1>
+                    <p>Update blog content, SEO, category, and publishing status.</p>
+                </div>
+                <div class="editor-actions">
+                    <a href="{% url 'AdminBlogs' user.unique_code %}" class="btn-secondary">Cancel</a>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </div>
+            <div class="blog-editor-layout">
+                <main class="blog-editor-main">
+                    <div class="editor-card">
+                        <label>Blog Title</label>
+                        <input type="text" name="title" class="editor-title-input" value="{{ blog.title }}" required>
+                    </div>
+                    <div class="editor-card">
+                        <label>Short Description</label>
+                        <textarea name="short_description" rows="4">{{ blog.short_description }}</textarea>
+                    </div>
+                    <div class="editor-card editor-content-card">
+                        <label>Blog Content</label>
+                        <textarea name="content" rows="18">{{ blog.content }}</textarea>
+                    </div>
+                    <div class="editor-card">
+                        <h3>SEO Settings</h3>
+                        <div class="form-group">
+                            <label>Meta Title</label>
+                            <input type="text" name="meta_title" value="{{ blog.meta_title|default:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Meta Description</label>
+                            <textarea name="meta_description" rows="3">{{ blog.meta_description|default:'' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Meta Keywords</label>
+                            <textarea name="meta_keywords" rows="3">{{ blog.meta_keywords|default:'' }}</textarea>
+                        </div>
+                    </div>
+                </main>
+                <aside class="blog-editor-sidebar">
+                    <div class="editor-card">
+                        <h3>Publishing</h3>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select name="is_active">
+                                <option value="True" {% if blog.is_active %}selected{% endif %}>Active</option>
+                                <option value="False" {% if not blog.is_active %}selected{% endif %}>Draft</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Featured</label>
+                            <select name="is_featured">
+                                <option value="False" {% if not blog.is_featured %}selected{% endif %}>No</option>
+                                <option value="True" {% if blog.is_featured %}selected{% endif %}>Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <h3>Category</h3>
+                        <div class="form-group">
+                            <label>Select Category</label>
+                            <select name="category">
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if blog.category and blog.category.id == category.id %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <h3>Slug</h3>
+                        <div class="form-group">
+                            <label>URL Slug</label>
+                            <input type="text" name="slug" value="{{ blog.slug }}">
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <h3>Featured Image</h3>
+                        {% if blog.image %}
+                        <img src="{{ blog.image.url }}" class="blog-current-image">
+                        {% endif %}
+                        <div class="blog-image-upload">
+                            <input type="file" name="image" accept="image/*">
+                            <p>Upload new image to replace current one.</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </form>
+    </section>
+{% endblock %}

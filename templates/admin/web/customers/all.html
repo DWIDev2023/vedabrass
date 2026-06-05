@@ -1,0 +1,90 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | All Customers{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">All Customers</h2>
+            </div>
+
+            <input type="text" id="customerSearch" placeholder="Search customers..." class="search-input"/>
+            <div class="category-table">
+                <div class="table-head">
+                    <div>Customer</div>
+                    <div>Email</div>
+                    <div>Mobile</div>
+                    <div>Orders</div>
+                    <div>GST</div>
+                    <div>Joined</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                {% for customer in customers %}
+                <div class="table-row customer-row">
+                    <div>
+                        <strong>{{ customer.name }}</strong>
+                        {% if customer.company_name %}
+                        <br>
+                        <small>{{ customer.company_name }}</small>
+                        {% endif %}
+                    </div>
+                    <div>{{ customer.email }}</div>
+                    <div>{{ customer.mobile }}</div>
+                    <div>{{ customer.orders.count }}</div>
+                    <div>
+                        {% if customer.gst_number %}
+                            {{ customer.gst_number }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <div>{{ customer.created_at|date:"d M Y" }}</div>
+                    <div>
+                        {% if customer.orders.exists %}
+                        <span class="status active">Active</span>
+                        {% else %}
+                        <span class="status inactive">New</span>
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        <a href="{% url 'AdminViewCustomer' code=user.unique_code ccode=customer.unique_code %}" class="btn-edit"><i class="fa-solid fa-eye"></i></a>
+                        <a href="#" data-id="{{ customer.unique_code }}" data-name="{{ customer.name }}" class="btn-delete"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row">
+                    <div style=" grid-column: span 8; text-align:center; color:var(--text-muted);">
+                        No customers found.
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Customer</h3>
+                        <p id="deleteText">Are you sure you want to delete this customer?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteCustomer' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="customer_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

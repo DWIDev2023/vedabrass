@@ -1,0 +1,208 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Product Details</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                {% if category %}<a href="#">{{ category.name }}</a><span><span><i class="fa-solid fa-long-arrow-right"></i></span></span>{% endif %}
+                {% if subcategory %}<a href="#">{{ subcategory.name }}</a><span><i class="fa-solid fa-long-arrow-right"></i></span>{% endif %}
+                <strong>{{ product.name }}</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="product-detail-section">
+        <div class="product-detail-container">
+            <div class="product-gallery">
+                {% with product.images.all|first as main_img %}
+                    {% if main_img and main_img.image %}
+                    <img class="main-product-img" src="{{ main_img.image.url }}" alt="{{ product.name }}">
+                    {% endif %}
+                {% endwith %}
+                <div class="thumb-gallery">
+                    {% for img in product.images.all %}
+                    <img class="{% if forloop.first %}active{% endif %}" src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}">
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="product-detail-info">
+                <h1>{{ product.name }}</h1>
+                {% if product.product_code %}
+                <p class="product-code">Code: {{ product.product_code }}</p>
+                {% endif %}
+
+                <div class="detail-price">
+                    {% if product.discount_price and product.discount_price < product.price %}
+                    <span class="old">₹{{ product.price|intcomma }}</span>
+                    <span class="new">₹{{ product.discount_price|intcomma }}</span>
+                    <span class="discount">-{{ product.discount_percentage }}%</span>
+                    {% else %}
+                    <span class="new">₹{{ product.price|intcomma }}</span>
+                    {% endif %}
+                </div>
+
+                {% if product.inventory %}
+                <p class="stock {% if product.inventory.quantity > 0 %}in-stock{% else %}out-stock{% endif %}">
+                    {% if product.inventory.quantity > 0 %}
+                        In Stock
+                    {% else %}
+                        Out of Stock
+                    {% endif %}
+                </p>
+                {% endif %}
+
+                <div class="product-actions-detail">
+                    <button class="cart-btn add-to-cart-btn" data-slug="{{ product.unique_code }}">Add to Cart</button>
+                </div>
+
+                <div class="product-meta">
+                    {% if product.brand %}
+                    <p><strong>Brand:</strong> {{ product.brand }}</p>
+                    {% endif %}
+                    {% if product.weight %}
+                    <p><strong>Weight:</strong> {{ product.weight }} kg</p>
+                    {% endif %}
+                    {% if product.height and product.width %}
+                    <p><strong>Size:</strong> {{ product.height }} x {{ product.width }} inch</p>
+                    {% endif %}
+                </div>
+
+                <div class="product-attributes">
+                    {% for attr in product.attributes.all %}
+                    <p><strong>{{ attr.name }}:</strong> {{ attr.value }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="product-description-section">
+        <div class="product-description-container">
+            <h2>Description</h2>
+            <p>{{ product.description }}</p>
+        </div>
+    </section>
+
+    <section class="product-reviews-section">
+        <div class="product-description-container">
+            <h2>Customer Reviews</h2>
+            <div class="review-grid">
+                {% for review in product.reviews.all %}
+                <div class="review-card">
+                    <div class="review-top">
+                        <div>
+                            <h4>{{ review.title }}</h4>
+                            <span>{{ review.customer.name }}</span>
+                        </div>
+                        <div class="review-rating">{{ review.rating }}/5</div>
+                    </div>
+                    <p>{{ review.comment }}</p>
+                </div>
+                {% empty %}
+                <p class="empty-review">No reviews yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="review-form-section">
+        <div class="product-description-container">
+            <h2>Write a Review</h2>
+            <form method="POST" action="{% url 'SubmitReview' %}" class="review-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="review-grid-form">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="hidden" name="product" value="{{ product.unique_code }}">
+                        <input type="text" name="name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Email</label>
+                        <input type="email" name="email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Mobile Number</label>
+                        <input type="tel" name="mobile" minlength="10" maxlength="10" placeholder="Enter your mobile number">
+                    </div>
+                    <div class="form-group">
+                        <label>Review Title</label>
+                        <input type="text" name="title" placeholder="Enter review title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select name="rating" required>
+                            <option value="" hidden>Select Rating</option>
+                            <option value="5">5 Star</option>
+                            <option value="4">4 Star</option>
+                            <option value="3">3 Star</option>
+                            <option value="2">2 Star</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Product Image</label>
+                        <input type="file" name="image" accept="image/*">
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label>Your Review</label>
+                    <textarea rows="6" name="comment" placeholder="Write your review..." required></textarea>
+                </div>
+                <button type="submit" class="submit-review-btn">Submit Review</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="related-products-section">
+        <div class="related-products-container">
+            <div class="section-header">
+                <span class="section-tag">You May Also Like</span>
+                <h2>Related Products</h2>
+            </div>
+
+            <div class="product-grid">
+                {% for related in related_products %}
+                <div class="product-card">
+                    <div class="product-media">
+                        {% if related.discount_price and related.discount_price < related.price %}
+                        <span class="product-discount">
+                            {{ related.discount_percentage }}% OFF
+                        </span>
+                        {% endif %}
+                        <a href="{% url 'ProductDetails' related.slug %}">
+                            {% if related.ordered_images %}
+                            <img src="{{ related.ordered_images.0.image.url }}" alt="{{ related.ordered_images.0.alt_text|default:related.name }}">
+                            {% endif %}
+                        </a>
+                        <a href="{% url 'ProductDetails' related.slug %}" class="quick-view">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">{{ related.collection.name }}</span>
+                        <h3>{{ related.name }}</h3>
+                        <div class="price">
+                            {% if related.discount_price and related.discount_price < related.price %}
+                            <span class="old">₹{{ related.price|intcomma }}</span>
+                            <span class="new">₹{{ related.discount_price|intcomma }}</span>
+                            {% else %}
+                            <span class="new">₹{{ related.price|intcomma }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="product-footer">
+                            <a href="{% url 'ProductDetails' related.slug %}">View Details</a>
+                            <button class="add-to-cart-btn" data-slug="{{ related.unique_code }}">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

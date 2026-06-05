@@ -1,0 +1,95 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | All Orders{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Order Details</h2>
+                    <p class="text-muted">Order ID: {{ order.order_id }}</p>
+                </div>
+                <div class="actions">
+                    <a href="{% url 'AdminEditOrder' order.unique_code %}" class="btn-primary"><i class="fa-solid fa-pen"></i> Edit</a>
+                    <a href="{% url 'AdminOrders' user.unique_code %}" class="btn-primary">Back to Orders</a>
+                </div>
+            </div>
+
+            <div class="order-view-grid">
+                <div class="dashboard-card">
+                    <h3>Customer Details</h3>
+                    <p><strong>Name:</strong> {{ order.customer.name }}</p>
+                    <p><strong>Email:</strong> {{ order.customer.email }}</p>
+                    <p><strong>Mobile:</strong> {{ order.customer.mobile }}</p>
+                    <p><strong>Company:</strong> {{ order.customer.company_name|default:"—" }}</p>
+                    <p><strong>GST:</strong> {{ order.customer.gst_number|default:"—" }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Order Summary</h3>
+                    <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                    <p><strong>Status:</strong> <span class="status-badge {{ order.status|lower }}">{{ order.status }}</span></p>
+                    <p><strong>Subtotal:</strong> ₹{{ order.subtotal }}</p>
+                    <p><strong>Shipping:</strong> ₹{{ order.shipping }}</p>
+                    <p><strong>Total:</strong> ₹{{ order.total }}</p>
+                    <p><strong>Date:</strong> {{ order.created_at|date:"d M Y, h:i A" }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Billing Address</h3>
+                    <p>{{ order.billing_address.address_line_1 }}</p>
+                    <p>{{ order.billing_address.address_line_2|default:"" }}</p>
+                    <p>{{ order.billing_address.landmark|default:"" }}</p>
+                    <p>{{ order.billing_address.city }}, {{ order.billing_address.state }}</p>
+                    <p>{{ order.billing_address.country }} - {{ order.billing_address.postal_code }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Shipping Address</h3>
+                    <p>{{ order.shipping_address.address_line_1 }}</p>
+                    <p>{{ order.shipping_address.address_line_2|default:"" }}</p>
+                    <p>{{ order.shipping_address.landmark|default:"" }}</p>
+                    <p>{{ order.shipping_address.city }}, {{ order.shipping_address.state }}</p>
+                    <p>{{ order.shipping_address.country }} - {{ order.shipping_address.postal_code }}</p>
+                </div>
+            </div>
+
+            <div class="category-table" style="--table-columns: 1.8fr 0.8fr 0.8fr 0.8fr;">
+                <div class="table-head">
+                    <div>Product</div>
+                    <div>Qty</div>
+                    <div>Price</div>
+                    <div>Total</div>
+                </div>
+
+                {% for item in order.items.all %}
+                <div class="table-row">
+                    <div class="cart-product">
+                        {% if item.product.ordered_images %}
+                        <img src="{{ item.product.ordered_images.0.image.url }}" class="thumb" alt="{{ item.product.ordered_images.0.alt_text|default:item.product.name }}">
+                        {% endif %}
+                        <div>
+                            <strong>{{ item.product.name }}</strong><br>
+                            <small>{{ item.product.product_code }}</small>
+                        </div>
+                    </div>
+
+                    <div>{{ item.quantity }}</div>
+                    <div>₹{{ item.price }}</div>
+                    <div>₹{{ item.total }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

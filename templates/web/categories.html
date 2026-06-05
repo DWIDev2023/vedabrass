@@ -1,0 +1,37 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>All Categories</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Categories</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="category-showcase-section">
+        <div class="section-header">
+            <h2>Shop By Category</h2>
+            <p>Discover handcrafted brass idols, pooja essentials, home decore, gifting collections, and timeless traditional artistry.</p>
+        </div>
+        <div class="category-showcase-grid">
+            {% for category in categories %}
+            <a href="{% url 'Subcategory' category.slug %}" class="category-card">
+                <div class="category-image">
+                    {% if category.image %}
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                    {% endif %}
+                </div>
+                <div class="category-content">
+                    <h3>{{ category.name }}</h3>
+                    <span>Explore Collection</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

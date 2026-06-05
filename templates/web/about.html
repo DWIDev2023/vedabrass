@@ -1,0 +1,89 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="about-hero">
+        <div class="about-hero-content">
+            <span class="section-tag">Our Legacy</span>
+            <h1>Crafting Sacred Brass Artistry For Modern Spaces</h1>
+            <p>Vedabrass brings together traditional craftsmanship, spiritual heritage, and timeless luxury through handcrafted brass idols, décor, and gifting collections.</p>
+        </div>
+    </section>
+
+    <section class="about-story">
+        <div class="about-story-container">
+            <div class="about-story-image">
+                <img src="{% static 'front/images/about-story.jpg' %}" alt="">
+            </div>
+            <div class="about-story-content">
+                <span class="section-tag">Who We Are</span>
+                <h2>Rooted In Tradition. Designed For Today.</h2>
+                <p>At Vedabrass, every creation reflects a journey of devotion, heritage, and artistry. We collaborate with skilled artisans who preserve generations of traditional brass craftsmanship.</p>
+                <p>From divine idols to premium décor and gifting collections, our pieces are crafted to elevate homes, sacred spaces, celebrations, and corporate relationships.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-process">
+        <div class="section-header">
+            <span class="section-tag">Our Process</span>
+            <h2>Handcrafted With Precision</h2>
+        </div>
+
+        <div class="process-grid">
+            <div class="process-card">
+                <div class="process-number">01</div>
+                <h3>Design</h3>
+                <p>Thoughtfully curated forms inspired by Indian heritage.</p>
+            </div>
+            <div class="process-card">
+                <div class="process-number">02</div>
+                <h3>Craftsmanship</h3>
+                <p>Handmade by experienced artisans using traditional techniques.</p>
+            </div>
+            <div class="process-card">
+                <div class="process-number">03</div>
+                <h3>Finishing</h3>
+                <p>Detailed polishing and quality refinement for every product.</p>
+            </div>
+            <div class="process-card">
+                <div class="process-number">04</div>
+                <h3>Delivery</h3>
+                <p>Carefully packaged and delivered across India.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-why">
+        <div class="section-header">
+            <span class="section-tag">Why Vedabrass</span>
+            <h2>Built On Craft, Trust & Elegance</h2>
+        </div>
+        <div class="why-grid">
+            <div class="why-card">
+                <h3>Premium Quality</h3>
+                <p>Durable brass craftsmanship with timeless finishing.</p>
+            </div>
+            <div class="why-card">
+                <h3>Authentic Designs</h3>
+                <p>Traditional artistry blended with modern aesthetics.</p>
+            </div>
+            <div class="why-card">
+                <h3>Curated Gifting</h3>
+                <p>Elegant gifting collections for weddings and corporates.</p>
+            </div>
+            <div class="why-card">
+                <h3>Trusted Experience</h3>
+                <p>Serving customers with handcrafted excellence and care.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-gifting">
+        <div class="about-gifting-content">
+            <span class="section-tag">Luxury Gifting</span>
+            <h2>Corporate, Festive & Wedding Gifting Collections</h2>
+            <p>We curate premium handcrafted gifting experiences for brands, celebrations, and special occasions with elegant packaging and bulk order support.</p>
+            <a href="{% url 'Collections' 'gifting-items' %}" class="btn-primary">Explore Gifting</a>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Collections</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <a href="{% url 'Welcome' %}">All Categories</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <a href="{% url 'Welcome' %}">{{ subcategory.name }}</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Collections</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="collection-section">
+        <div class="section-header">
+            <h2>Explore Collections</h2>
+            <p>Discover handcrafted brass collections curated for every space, ritual, and gifting occasion.</p>
+        </div>
+
+        <div class="collection-grid">
+            {% for collection in collections %}
+            {% if subcategory.slug == "festival-gifts" or subcategory.slug == "special-occassion-gifts" or subcategory.slug == "corporate-gifting" %}
+            <div class="festive-card">
+                {% if collection.image %}
+                <img src="{{ collection.image.url }}" alt="{{ collection.name }}">
+                {% endif %}
+                <div class="festive-content">
+                    <h3>{{ collection.name }}</h3>
+                    <a href="{% url 'ProductsByCollection' collection.slug %}">Explore</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'ProductsByCollection' collection.slug %}" class="collection-card">
+                <div class="collection-image">
+                    {% if collection.image %}
+                    <img src="{{ collection.image.url }}" alt="{{ collection.name }}">
+                    {% endif %}
+                </div>
+                <div class="collection-content">
+                    <h3>{{ collection.name }}</h3>
+                    <span>View Products</span>
+                </div>
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

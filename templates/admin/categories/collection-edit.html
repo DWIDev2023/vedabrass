@@ -1,0 +1,86 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Edit Collection Details{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Edit Collection Details</h2>
+
+            <form class="category-form" method="POST" action="{% url 'AdminEditCollection' collection.unique_code %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Collection Name</label>
+                    <input type="text" id="collectionName" name="name" placeholder="Enter collection name" value="{{ collection.name }}" required />
+                </div>
+                <div class="form-group">
+                    <label>Slug</label>
+                    <input type="text" id="collectionSlug" name="slug" placeholder="Auto-generated or custom slug" value="{{ collection.slug }}" required />
+                </div>
+                <div class="form-group full">
+                    <label>Collection Image</label>
+                    <div class="category-image-upload">
+                        <input type="file" id="collectionImageInput" name="image" accept="image/*" hidden>
+                        <div class="category-upload-box" id="collectionImageBox">
+                            <span>Click to change image</span>
+                            <small>Only JPG 500x500</small>
+                        </div>
+                        <div class="category-image-preview" id="collectionImagePreview" {% if collection.image %}style="display:block;"{% endif %}>
+                            <img id="collectionPreviewImg" src="{% if collection.image %}{{ collection.image.url }}{% endif %}" alt="Preview">
+                            <button type="button" id="collectionImageRemove">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label>Description</label>
+                    <textarea rows="4" name="description" placeholder="Write a short description...">{{ collection.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Code For Product</label>
+                    <input type="text" name="ccode" placeholder="e.g. 07 or 14" value="{{ collection.scode }}" required />
+                </div>
+                <div class="form-group">
+                    <label>Parent Category</label>
+                    <select id="category" name="category">
+                        <option value="" hidden>Select Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if parent_category and parent_category.id == category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subategory</label>
+                    <select id="subcategory" name="subcategory">
+                        <option value="" hidden>Select Subcategory</option>
+                        {% for subcategory in subcategories %}
+                        <option value="{{ subcategory.id }}" {% if collection.category and collection.category.id == subcategory.id %}selected{% endif %}>
+                            {{ subcategory.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="is_active" required>
+                        <option value="True" {% if collection.is_active %}selected{% endif %}>Active</option>
+                        <option value="False" {% if not collection.is_active %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-content">
+            <h1>Contact Us</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Contact Us</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="contact-container">
+            <div class="contact-info-card">
+                <span class="section-tag">Get In Touch</span>
+                <h2>We'd Love To Hear From You</h2>
+                <p>Have questions about products, bulk orders, gifting, or delivery? Reach out to the Vedabrass team.</p>
+
+                <div class="contact-info-list">
+                    <div class="contact-info-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <div>
+                            <span>Call Us</span>
+                            <a href="tel:+919999999999">+91 99999 99999</a>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <span>Email</span>
+                            <a href="mailto:support@vedabrass.com">support@vedabrass.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <span>Address</span>
+                            <p>Hyderabad, Telangana, India</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-card">
+                <h3>Send Message</h3>
+                <form method="POST" action="{% url 'Contact' %}">
+                    {% csrf_token %}
+                    <div class="contact-grid">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile</label>
+                            <input type="text" name="mobile" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="contact-submit">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-map-section">
+        <div class="contact-map-container">
+            <iframe src="https://www.google.com/maps?q=Hyderabad%20Telangana%20India&output=embed" loading="lazy"></iframe>
+        </div>
+    </section>
+{% endblock %}

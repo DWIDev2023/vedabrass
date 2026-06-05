@@ -1,0 +1,71 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Newsletter Subscribers{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    Newsletter Subscribers
+                </h2>
+            </div>
+
+            <input type="text" id="subscriberSearch" placeholder="Search subscribers..." class="search-input"/>
+            <div class="category-table">
+                <div class="table-head">
+                    <div>Email</div>
+                    <div>Status</div>
+                    <div>Subscribed On</div>
+                    <div>Actions</div>
+                </div>
+                {% for subscriber in subscribers %}
+                <div class="table-row subscriber-row">
+                    <div><strong>{{ subscriber.email }}</strong></div>
+                    <div>
+                        {% if subscriber.is_active %}
+                            <span class="status active">Active</span>
+                        {% else %}
+                            <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div>{{ subscriber.created_at|date:"d M Y" }}</div>
+                    <div class="actions">
+                        <a href="#" data-id="{{ subscriber.unique_code }}" data-name="{{ subscriber.email }}" class="btn-delete"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row">
+                    <div style="grid-column: span 4; text-align:center; color:var(--text-muted);">
+                        No subscribers found.
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Subscriber</h3>
+                        <p id="deleteText">Are you sure you want to delete this subscriber?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteNewsletterSubscribers' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="subscriber_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

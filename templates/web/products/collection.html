@@ -1,0 +1,91 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>{{ collection.name }}</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <a href="{% url 'Categories' %}">All Categories</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <a href="{% url 'Subcategory' category.slug %}">{{ subcategory.name }}</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>{{ collection.name }}</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="shop-section">
+        <div class="shop-container">
+            <aside class="shop-sidebar">
+                <div class="filter-box">
+                    <h3>Other Collections</h3>
+                    {% for collect in other_collections %}
+                    <div class="filter-group">
+                        <a href="{% url 'ProductsByCollection' collect.slug %}" class="filter-title">{{ collect.name }}</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="filter-box">
+                    <h3>Other Categories</h3>
+                    {% for category in categories %}
+                    <div class="filter-group">
+                        <a href="{% url 'ProductsByCategory' category.slug %}" class="filter-title">{{ category.name }}</a>
+                        {% for subcat in category.category_set.all %}
+                        <a href="{% url 'ProductsBySubcategory' subcat.slug %}" class="filter-link">{{ subcat.name }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </aside>
+            <div class="shop-products">
+                <div class="shop-topbar">
+                    <h2>All Products</h2>
+                    <span>{{ products|length }} Products</span>
+                </div>
+                <div class="product-grid">
+                    {% for product in products %}
+                    <div class="product-card">
+                        <div class="product-media">
+                            {% if product.discount_price and product.discount_price < product.price %}
+                            <span class="product-discount">
+                                {{ product.discount_percentage }}% OFF
+                            </span>
+                            {% endif %}
+                            <a href="{% url 'ProductDetails' product.slug %}">
+                                {% if product.ordered_images %}
+                                <img src="{{ product.ordered_images.0.image.url }}" alt="{{ product.ordered_images.0.alt_text|default:product.name }}">
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'ProductDetails' product.slug %}" class="quick-view">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">{{ product.collection.name }}</span>
+                            <h3>{{ product.name }}</h3>
+                            <div class="price">
+                                {% if product.discount_price and product.discount_price < product.price %}
+                                <span class="old">₹{{ product.price|intcomma }}</span>
+                                <span class="new">₹{{ product.discount_price|intcomma }}</span>
+                                {% else %}
+                                <span class="new">₹{{ product.price|intcomma }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="product-footer">
+                                <a href="{% url 'ProductDetails' product.slug %}">View Details</a>
+                                <button class="add-to-cart-btn" data-slug="{{ product.unique_code }}">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No products found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
