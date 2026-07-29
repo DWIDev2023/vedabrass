@@ -1,0 +1,111 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Dashboard{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">All Products</h2>
+                <a href="{% url 'AdminAddProduct' user.unique_code %}" class="btn-primary">+ Add Product</a>
+            </div>
+            <input type="text" id="productSearch" placeholder="Search products..." class="search-input" >
+
+            <div class="category-table">
+                <div class="table-head">
+                    <div>Image</div>
+                    <div>Name</div>
+                    <div>Code</div>
+                    <div>Category</div>
+                    <div>Subcategory</div>
+                    <div>Price</div>
+                    <div>Stock</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                {% for product in products %}
+                <div class="table-row product-row">
+                    <div>
+                        {% if product.ordered_images %}
+                        <img src="{{ product.ordered_images.0.image.url }}" alt="{{ product.ordered_images.0.alt_text|default:product.name }}" width="60">
+                        {% endif %}
+                    </div>
+                    <div>
+                        <strong>{{ product.name }}</strong><br>
+                    </div>
+                    <div>{{ product.product_code }}</div>
+                    <div>
+                        {% if product.category.parent %}
+                            {{ product.category.parent.name }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if product.category %}
+                            {{ product.category.name }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <div>
+                        ₹{{ product.price }}
+                        {% if product.discount_price %}
+                            <br><small>Sale: ₹{{ product.discount_price }}</small>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if product.inventory %}
+                            {{ product.inventory.quantity }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if product.is_active %}
+                            <span class="status active">Active</span>
+                        {% else %}
+                            <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        <a href="#" class="btn-edit" target="_blank" rel="noopener noreferrer" title="View As Customer"><i class="fa-solid fa-eye"></i></a>
+                        <a href="{% url 'AdminEditProduct' product.unique_code %}" class="btn-edit"><i class="fa-solid fa-edit"></i></a>
+                        <a href="#" class="btn-delete" data-id="{{ product.unique_code }}" data-name="{{ product.name }}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row product-row">
+                    <div style="grid-column: span 8; text-align:center; color:var(--text-muted);">
+                    No products found.
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Product</h3>
+                        <p id="deleteText">Are you sure you want to delete this product?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteProduct' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

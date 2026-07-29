@@ -1,0 +1,76 @@
+<!doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Complete Your Order</title>
+</head>
+<body style="margin:0;padding:0;background:#f8f4ee;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center">
+
+<table width="700" cellpadding="0" cellspacing="0" style="background:#ffffff;margin:30px auto;border-radius:10px;overflow:hidden;">
+
+<tr>
+<td style="background:#442d1c;padding:30px;text-align:center;color:#fff;">
+    <h1 style="margin:0;">Your Order Is Waiting</h1>
+    <p style="margin-top:10px;">Order ID: {{ order.order_id }}</p>
+</td>
+</tr>
+
+<tr>
+<td style="padding:30px;">
+
+<p>Hello {{ customer.name }},</p>
+
+<p>
+You recently started placing an order with Vedabrass but the payment has not been completed yet.
+</p>
+
+<table width="100%" cellpadding="10" cellspacing="0" border="1" style="border-collapse:collapse;margin-top:20px;">
+<tr>
+    <td><strong>Order ID</strong></td>
+    <td>{{ order.order_id }}</td>
+</tr>
+<tr>
+    <td><strong>Total Amount</strong></td>
+    <td>₹{{ order.total }}</td>
+</tr>
+<tr>
+    <td><strong>Status</strong></td>
+    <td>Awaiting Payment</td>
+</tr>
+</table>
+
+<p style="margin-top:25px;">
+Complete your payment to confirm the order and reserve your selected handcrafted products.
+</p>
+
+<p style="text-align:center;margin:35px 0;">
+    <a href="{{ resume_url }}"
+       style="background:#84592B;color:#fff;text-decoration:none;padding:14px 28px;border-radius:6px;font-weight:bold;">
+       Complete Payment
+    </a>
+</p>
+
+<p>
+If you have already completed the payment, please ignore this email.
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="background:#442d1c;color:#fff;padding:20px;text-align:center;">
+Vedabrass
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+</body>
+</html>

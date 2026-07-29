@@ -1,0 +1,512 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Chatbot Analytics{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="cb-dashboard">
+        <div class="cb-hero">
+            <div>
+                <h1>Chatbot Analytics</h1>
+                <p>Monitor searches, recommendations, FAQs and customer interactions.</p>
+            </div>
+            <div class="cb-filter-group">
+                <button class="active">Today</button>
+                <button>7 Days</button>
+                <button>30 Days</button>
+                <button>Custom</button>
+            </div>
+        </div>
+
+        <div class="cb-stats-grid">
+            <div class="cb-card">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Total Searches</span>
+                <h2>{{ total_searches }}</h2>
+            </div>
+            <div class="cb-card">
+                <i class="fa-solid fa-circle-question"></i>
+                <span>FAQ Hits</span>
+                <h2>{{ faq_hits }}</h2>
+            </div>
+            <div class="cb-card">
+                <i class="fa-solid fa-box"></i>
+                <span>Product Matches</span>
+                <h2>{{ product_hits }}</h2>
+            </div>
+            <div class="cb-card">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Bundle Matches</span>
+                <h2>{{ bundle_hits }}</h2>
+            </div>
+            <div class="cb-card">
+                <i class="fa-solid fa-ticket"></i>
+                <span>Support Tickets</span>
+                <h2>{{ support_tickets }}</h2>
+            </div>
+            <div class="cb-card">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <span>No Result</span>
+                <h2>{{ empty_hits }}</h2>
+            </div>
+        </div>
+
+        <div class="cb-chart-grid">
+            <div class="cb-panel">
+                <div class="panel-header">
+                    Search Distribution
+                </div>
+                <div class="chart-container">
+                    <canvas id="resultChart"></canvas>
+                </div>
+            </div>
+            <div class="cb-panel">
+                <div class="panel-header">
+                    Top Search Queries
+                </div>
+                <div class="chart-container">
+                    <canvas id="topKeywordChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="cb-chart-grid">
+            <div class="cb-panel">
+                <div class="panel-header">
+                    Most Recommended Products
+                </div>
+                <div class="chart-container">
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+            <div class="cb-panel">
+                <div class="panel-header">
+                    Most Recommended Bundles
+                </div>
+                <div class="chart-container">
+                    <canvas id="bundleChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="cb-grid">
+            <div class="cb-panel">
+                <div class="panel-header">Top Searches</div>
+                <ul>
+                    {% for keyword in top_keywords %}
+                    <li>
+                        <span>{{ keyword.query }}</span>
+                        <strong>{{ keyword.total }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="cb-panel">
+                <div class="panel-header">Top FAQs</div>
+                <ul>
+                    {% for faq in top_faqs %}
+                    <li>
+                        <span>{{ faq.question }}</span>
+                        <strong>{{ faq.total }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="cb-panel">
+                <div class="panel-header">Recommended Products</div>
+                <ul>
+                    {% for product in top_products %}
+                    <li>
+                        <span>{{ product.name }}</span>
+                        <strong>{{ product.total }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="cb-panel">
+                <div class="panel-header">Recommended Bundles</div>
+                <ul>
+                    {% for bundle in top_bundles %}
+                    <li>
+                        <span>{{ bundle.name }}</span>
+                        <strong>{{ bundle.total }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="cb-panel">
+            <div class="panel-header">Searches With No Result</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Query</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in failed_queries %}
+                    <tr>
+                        <td>{{ log.query }}</td>
+                        <td>
+                            {% if log.customer %}
+                                {{ log.customer.name }}
+                            {% else %}
+                                Guest
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ log.created_at|date:"d M Y H:i" }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cb-panel">
+            <div class="panel-header">Recent Chat Activity</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Query</th>
+                        <th>Result</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in recent_activity %}
+                    <tr>
+                        <td>
+                            {% if log.customer %}
+                                {{ log.customer.name }}
+                            {% else %}
+                                Guest
+                            {% endif %}
+                        </td>
+                        <td>{{ log.query }}</td>
+                        <td>
+                            <span class="status">
+                                {{ log.result_type }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ log.created_at|timesince }} ago
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.min.js" integrity="sha512-n/G+dROKbKL3GVngGWmWfwK0yPctjZQM752diVYnXZtD/48agpUKLIn0xDQL9ydZ91x6BiOmTIFwWjjFi2kEFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.plugins.legend.labels.boxWidth = 14;
+        Chart.defaults.plugins.legend.labels.padding = 18;
+
+        const primary = "#7C3AED";
+        const green = "#16A34A";
+        const orange = "#F59E0B";
+        const blue = "#0EA5E9";
+        const red = "#EF4444";
+
+
+        /*---------------------------------------------------
+        RESULT DISTRIBUTION
+        ---------------------------------------------------*/
+
+        new Chart(
+            document.getElementById("resultChart"),
+            {
+
+                type: "doughnut",
+
+                data: {
+
+                    labels: [
+                        "FAQ",
+                        "Products",
+                        "Bundles",
+                        "Support",
+                        "Empty"
+                    ],
+
+                    datasets: [{
+
+                        data: {{ result_chart|safe }},
+
+                        backgroundColor: [
+                            primary,
+                            green,
+                            orange,
+                            blue,
+                            red
+                        ],
+
+                        borderWidth: 0
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+                            position: "bottom"
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /*---------------------------------------------------
+        TOP SEARCHES
+        ---------------------------------------------------*/
+
+        new Chart(
+            document.getElementById("topKeywordChart"),
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: {{ keyword_labels|safe }},
+
+                    datasets: [{
+
+                        label: "Searches",
+
+                        data: {{ keyword_values|safe }},
+
+                        borderRadius: 6,
+
+                        backgroundColor: primary
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    indexAxis: "y",
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            beginAtZero: true,
+
+                            grid: {
+
+                                color: "#efefef"
+
+                            }
+
+                        },
+
+                        y: {
+
+                            grid: {
+
+                                display: false
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /*---------------------------------------------------
+        TOP PRODUCTS
+        ---------------------------------------------------*/
+
+        new Chart(
+            document.getElementById("productChart"),
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: {{ product_labels|safe }},
+
+                    datasets: [{
+
+                        data: {{ product_values|safe }},
+
+                        backgroundColor: green,
+
+                        borderRadius: 6
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            grid: {
+
+                                color: "#efefef"
+
+                            }
+
+                        },
+
+                        x: {
+
+                            grid: {
+
+                                display: false
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /*---------------------------------------------------
+        TOP BUNDLES
+        ---------------------------------------------------*/
+
+        new Chart(
+            document.getElementById("bundleChart"),
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: {{ bundle_labels|safe }},
+
+                    datasets: [{
+
+                        data: {{ bundle_values|safe }},
+
+                        backgroundColor: orange,
+
+                        borderRadius: 6
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            grid: {
+
+                                color: "#efefef"
+
+                            }
+
+                        },
+
+                        x: {
+
+                            grid: {
+
+                                display: false
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    </script>
+{% endblock %}

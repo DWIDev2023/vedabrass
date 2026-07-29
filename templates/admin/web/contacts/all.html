@@ -1,0 +1,71 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Web Contacts{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    Contact Inquiries
+                </h2>
+            </div>
+
+            <input type="text" id="inquirySearch" placeholder="Search inquiries..." class="search-input"/>
+            <div class="category-table">
+                <div class="table-head">
+                    <div>Name</div>
+                    <div>Email</div>
+                    <div>Mobile</div>
+                    <div>Subject</div>
+                    <div>Message</div>
+                    <div>Date</div>
+                    <div>Actions</div>
+                </div>
+                {% for inquiry in inquiries %}
+                <div class="table-row inquiry-row">
+                    <div><strong>{{ inquiry.name }}</strong></div>
+                    <div>{{ inquiry.email }}</div>
+                    <div>{{ inquiry.mobile }}</div>
+                    <div>{{ inquiry.subject }}</div>
+                    <div>{{ inquiry.message|truncatechars:100 }}</div>
+                    <div>{{ inquiry.created_at|date:"d M Y" }}</div>
+                    <div class="actions">
+                        <a href="#" data-id="{{ inquiry.unique_code }}" data-name="{{ inquiry.name }}" class="btn-delete"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row">
+                    <div style="grid-column: span 7; text-align:center; color:var(--text-muted);">
+                        No inquiries found.
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Contact</h3>
+                        <p id="deleteText">Are you sure you want to delete this contact?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteContact' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="contact_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

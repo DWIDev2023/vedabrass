@@ -1,0 +1,104 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="thankyou-section">
+        <div class="thankyou-container">
+            <div class="thankyou-card">
+                <div class="thankyou-icon"><i class="fa-solid fa-check"></i></div>
+                <span class="thankyou-tag">Order Successfully Placed</span>
+                <h1>Thank You For Your Order</h1>
+                <p class="thankyou-text">Your order has been received successfully. Our team will contact you shortly regarding confirmation and shipping updates.</p>
+
+                <div class="order-info-grid">
+                    <div class="order-info-item">
+                        <span>Order ID</span>
+                        <strong>#{{ order.unique_code }}</strong>
+                    </div>
+                    <div class="order-info-item">
+                        <span>Customer</span>
+                        <strong>{{ order.customer.name }}</strong>
+                    </div>
+                    <div class="order-info-item">
+                        <span>Total Amount</span>
+                        <strong>₹{{ order.total }}</strong>
+                    </div>
+                    <div class="order-info-item">
+                        <span>Status</span>
+                        <strong>{{ order.status }}</strong>
+                    </div>
+                </div>
+
+                <div class="thankyou-summary">
+                    <h3>Order Summary</h3>
+                    {% for item in order.items.all %}
+                    <div class="summary-product">
+                        {% if product.ordered_images %}
+                        <img src="{{ product.ordered_images.0.image.url }}" alt="{{ product.ordered_images.0.alt_text|default:product.name }}">
+                        {% endif %}
+
+                        <div class="summary-product-content">
+                            <h4>{{ item.product.name }}</h4>
+                            <p>Quantity: {{ item.quantity }}</p>
+                        </div>
+                        <strong>₹{{ item.total }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="thankyou-actions">
+                    <a href="{% url 'Products' %}" class="thankyou-btn primary">Continue Shopping</a>
+                    <a href="{% url 'TrackOrder' order.unique_code %}" class="thankyou-btn secondary">Track Order</a>
+                </div>
+
+                <div class="thankyou-offer">
+                    <span><i class="fa-solid fa-gift"></i> Use code <strong>VEDA10</strong> on your next purchase and get 10% OFF.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="thankyou-recommendations">
+        <div class="section-header">
+            <span class="section-tag">Recommended For You</span>
+            <h2>You May Also Like</h2>
+        </div>
+
+        <div class="product-grid">
+            {% for product in recommended_products %}
+            <div class="product-card">
+                <div class="product-media">
+                    {% if product.discount_price and product.discount_price < product.price %}
+                    <span class="product-discount">
+                        {{ product.discount_percentage }}% OFF
+                    </span>
+                    {% endif %}
+                    <a href="{% url 'ProductDetails' product.slug %}">
+                        {% if product.ordered_images %}
+                        <img src="{{ product.ordered_images.0.image.url }}" alt="{{ product.ordered_images.0.alt_text|default:product.name }}">
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'ProductDetails' product.slug %}" class="quick-view">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.collection.name }}</span>
+                    <h3>{{ product.name }}</h3>
+                    <div class="price">
+                        {% if product.discount_price and product.discount_price < product.price %}
+                        <span class="old">₹{{ product.price|intcomma }}</span>
+                        <span class="new">₹{{ product.discount_price|intcomma }}</span>
+                        {% else %}
+                        <span class="new">₹{{ product.price|intcomma }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-footer">
+                        <a href="{% url 'ProductDetails' product.slug %}">View Details</a>
+                        <button class="add-to-cart-btn" data-slug="{{ product.unique_code }}">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

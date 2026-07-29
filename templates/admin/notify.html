@@ -1,0 +1,148 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Notifications{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section notification-page">
+        <div class="category-container">
+
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Notification Logs</h2>
+                    <p class="text-muted">Track Email, WhatsApp, SMS and Offline notifications.</p>
+                </div>
+            </div>
+
+            <div class="notification-filter-card">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>Search</label>
+                        <input type="text" id="notificationSearch" placeholder="Order ID, customer, recipient...">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Channel</label>
+                        <select id="channelFilter">
+                            <option value="">All Channels</option>
+                            <option value="Email">Email</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="SMS">SMS</option>
+                            <option value="Offline">Offline</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="Success">Success</option>
+                            <option value="Failed">Failed</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Event</label>
+                        <select id="eventFilter">
+                            <option value="">All Events</option>
+                            <option value="order_paid">Order Paid</option>
+                            <option value="tracking_available">Tracking Available</option>
+                            <option value="order_cancelled">Order Cancelled</option>
+                            <option value="payment_abandoned">Payment Abandoned</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-secondary" id="resetNotificationFilters">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="notification-stats">
+                <div><strong id="visibleCount">{{ logs|length }}</strong><span>Visible Logs</span></div>
+                <div><strong>{{ logs|length }}</strong><span>Total Logs</span></div>
+            </div>
+
+            <div class="notification-table">
+                <div class="notification-head">
+                    <div>Date</div>
+                    <div>Order</div>
+                    <div>Customer</div>
+                    <div>Channel</div>
+                    <div>Status</div>
+                    <div>Event</div>
+                    <div>Recipient</div>
+                    <div>Response</div>
+                </div>
+
+                {% for log in logs %}
+                <div class="notification-row"
+                    data-search="{{ log.order.order_id }} {{ log.order.customer.name }} {{ log.recipient }} {{ log.event }} {{ log.channel }} {{ log.status }}"
+                    data-channel="{{ log.channel }}"
+                    data-status="{{ log.status }}"
+                    data-event="{{ log.event }}">
+
+                    <div>
+                        <strong>{{ log.created_at|date:"d M Y" }}</strong>
+                        <small>{{ log.created_at|date:"h:i A" }}</small>
+                    </div>
+
+                    <div>
+                        <a href="{% url 'AdminViewOrder' log.order.unique_code %}" class="order-link">
+                            {{ log.order.order_id }}
+                        </a>
+                    </div>
+
+                    <div>{{ log.order.customer.name|default:"—" }}</div>
+
+                    <div>
+                        <span class="channel-pill channel-{{ log.channel|lower }}">
+                            {{ log.channel }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="status-badge {{ log.status|lower }}">
+                            {{ log.status }}
+                        </span>
+                    </div>
+
+                    <div>{{ log.event }}</div>
+
+                    <div>{{ log.recipient|default:"—" }}</div>
+
+                    <div>
+                        <button type="button"
+                                class="response-toggle"
+                                data-response="{{ log.response|default:'No response available'|escape }}">
+                            View
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="notification-empty">
+                    No notification logs found.
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="notificationResponseModal" class="notification-modal">
+                <div class="notification-modal-box">
+                    <button type="button" class="notification-modal-close">&times;</button>
+                    <h3>Notification Response</h3>
+                    <pre id="notificationResponseText"></pre>
+                </div>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | All Product Reviews{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Edit Review</h2>
+                    <p class="text-muted">{{ review.product.name }}</p>
+                </div>
+
+                <a href="{% url 'AdminReviews' user.unique_code %}" class="btn-primary">Back to Reviews</a>
+            </div>
+
+            <form method="POST" action="{% url 'AdminEditReview' review.unique_code %}" enctype="multipart/form-data" class="category-form">
+                {% csrf_token %}
+                <div class="dashboard-card">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Product</label>
+                            <input type="text" value="{{ review.product.name }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Customer</label>
+                            <input type="text" value="{% if review.customer %}{{ review.customer.name }}{% else %}Guest{% endif %}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Review Title</label>
+                            <input type="text" name="title" value="{{ review.title }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Rating</label>
+                            <select name="rating" required>
+                                <option value="5" {% if review.rating == 5 %}selected{% endif %}>5 Star</option>
+                                <option value="4" {% if review.rating == 4 %}selected{% endif %}>4 Star</option>
+                                <option value="3" {% if review.rating == 3 %}selected{% endif %}>3 Star</option>
+                                <option value="2" {% if review.rating == 2 %}selected{% endif %}>2 Star</option>
+                                <option value="1" {% if review.rating == 1 %}selected{% endif %}>1 Star</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select name="is_approved" required>
+                                <option value="True" {% if review.is_approved %}selected{% endif %}>Approved</option>
+                                <option value="False" {% if not review.is_approved %}selected{% endif %}>Pending</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Review Image</label>
+                            <input type="file" name="image" accept="image/*">
+                        </div>
+                        <div class="form-group full">
+                            <label>Comment</label>
+                            <textarea name="comment" rows="5" required>{{ review.comment }}</textarea>
+                        </div>
+                        {% if review.image %}
+                        <div class="form-group full">
+                            <label>Current Image</label>
+                            <img src="{{ review.image.url }}" class="thumb">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <a href="{% url 'AdminReviews' user.unique_code %}" class="btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

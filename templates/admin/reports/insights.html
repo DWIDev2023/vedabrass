@@ -1,0 +1,97 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Insights{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Insights &amp; Forecasts</h2>
+                    <p class="text-muted">Business trends, simple forecasts and actionable insights.</p>
+                </div>
+
+                <a href="{% url 'AdminReports' user.unique_code %}" class="btn-primary">Back to Reports</a>
+            </div>
+
+            <div class="dashboard-card insight-health-card">
+                <div>
+                    <span>Business Health Score</span>
+                    <h2>{{ health_score }}/100</h2>
+                    <p>{{ health_label }}</p>
+                </div>
+            </div>
+
+            <div class="report-card-grid">
+                <div class="report-card">
+                    <span>Revenue Trend</span>
+                    <strong>{{ revenue_trend }}%</strong>
+                </div>
+                <div class="report-card">
+                    <span>Order Trend</span>
+                    <strong>{{ order_trend }}%</strong>
+                </div>
+                <div class="report-card">
+                    <span>AOV Trend</span>
+                    <strong>{{ aov_trend }}%</strong>
+                </div>
+                <div class="report-card">
+                    <span>Abandoned Payments</span>
+                    <strong>{{ abandoned_payments }}</strong>
+                </div>
+            </div>
+
+            <div class="report-card-grid">
+                <div class="report-card">
+                    <span>Payment Success Rate</span>
+                    <strong>{{ payment_success_rate }}%</strong>
+                </div>
+                <div class="report-card">
+                    <span>Abandoned Payment Rate</span>
+                    <strong>{{ abandoned_payment_rate }}%</strong>
+                </div>
+                <div class="report-card">
+                    <span>Notification Success Rate</span>
+                    <strong>{{ notification_success_rate }}%</strong>
+                </div>
+                <div class="report-card">
+                    <span>Shipment Readiness</span>
+                    <strong>{{ shipment_readiness_rate }}%</strong>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Recommended Actions</h3>
+                <div class="insight-list">
+                    {% for action in actions %}
+                    <div class="insight-action-card">
+                        <div class="insight-action-top">
+                            <span class="priority-badge priority-{{ action.priority|lower }}">
+                                {{ action.priority }}
+                            </span>
+                            <span class="category-badge">
+                                {{ action.category }}
+                            </span>
+                        </div>
+
+                        <h4>{{ action.title }}</h4>
+                        <p>{{ action.description }}</p>
+                    </div>
+                    {% empty %}
+                    <p>No action needed right now.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

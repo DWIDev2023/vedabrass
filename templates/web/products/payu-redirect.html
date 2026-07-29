@@ -1,0 +1,65 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="vb-payment-processing">
+        <div class="vb-payment-card">
+            <div class="vb-payment-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <span class="vb-payment-tag">Secure Payment</span>
+            <h1>Redirecting to PayU...</h1>
+            <p>Please wait while we connect you to the secure PayU payment gateway. Do not refresh or close this page.</p>
+
+            <div class="vb-order-summary">
+                <div>
+                    <span>Order ID</span>
+                    <strong>{{ order.order_id }}</strong>
+                </div>
+                <div>
+                    <span>Amount</span>
+                    <strong>₹{{ order.total|floatformat:2|intcomma }}</strong>
+                </div>
+            </div>
+
+            <div class="vb-loader">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <form id="payuForm" method="post" action="{{ payu_url }}">
+                {% for key, value in payu_data.items %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                {% endfor %}
+                <noscript>
+                    <button type="submit" class="vb-manual-pay-btn">Continue to Payment</button>
+                </noscript>
+            </form>
+            <button type="button" id="manualPayuBtn" class="vb-manual-pay-btn">Continue to Payment</button>
+            <small class="vb-payment-note">Protected by PayU Secure Payment Gateway</small>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            const form = document.getElementById("payuForm");
+            const btn = document.getElementById("manualPayuBtn");
+
+            if (!form) {
+                console.error("PayU form not found");
+                return;
+            }
+
+            setTimeout(function () {
+                form.submit();
+            }, 800);
+
+            if (btn) {
+                btn.addEventListener("click", function () {
+                    form.submit();
+                });
+            }
+    })();
+    </script>
+{% endblock %}

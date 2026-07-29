@@ -1,0 +1,76 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Search Results</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Search Results</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="shop-section">
+        <div class="shop-container">
+            <aside class="shop-sidebar">
+                <div class="filter-box">
+                    <h3>Categories</h3>
+                    {% for category in categories %}
+                    <div class="filter-group">
+                        <a href="{% url 'ProductsByCategory' category.slug %}" class="filter-title">{{ category.name }}</a>
+                        {% for subcat in category.category_set.all %}
+                        <a href="{% url 'ProductsBySubcategory' subcat.slug %}" class="filter-link">{{ subcat.name }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </aside>
+
+            <div class="shop-products">
+                <div class="shop-topbar">
+                    <div>
+                        <h2>Search Results</h2>
+                        <span>Showing results for "{{ query }}"</span>
+                    </div>
+                    <span>{{ results_count }} Products Found</span>
+                </div>
+                <div class="vb-product-grid two">
+                    {% for product in products %}
+                    <a href="{% url 'ProductDetails' product.slug %}" class="vb-product-card">
+                        {% if product.discount_price and product.discount_price < product.price %}
+                        <span class="vb-discount">SAVE {{ product.discount_percentage }}%</span>
+                        {% endif %}
+                        <div class="vb-image-area">
+                            <div class="vb-image-glow"></div>
+                            {% if product.ordered_images %}
+                            <img src="{{ product.ordered_images.0.image.url }}" alt="{{ product.ordered_images.0.alt_text|default:product.name }}">
+                            {% endif %}
+                        </div>
+                        <div class="vb-product-content">
+                            <span class="vb-category">{{ product.collection.name }}</span>
+                            <h3>{{ product.name }}</h3>
+                            <div class="vb-price">
+                                {% if product.discount_price and product.discount_price < product.price %}
+                                <span class="current">₹{{ product.discount_price|intcomma }}</span>
+                                <span class="old">₹{{ product.price|intcomma }}</span>
+                                {% else %}
+                                <span class="current">₹{{ product.price|intcomma }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="vb-product-actions">
+                                <button class="vb-cart-btn add-to-cart-btn" data-slug="{{ product.unique_code }}">Add to Cart</button>
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <p>No products found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

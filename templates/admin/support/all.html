@@ -1,0 +1,66 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Support Tickets{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">Support Tickets</h2>
+                <a href="{% url 'AdminCreateSupportTicket' user.unique_code %}" class="btn-primary">+ Create Ticket</a>
+            </div>
+            <input type="text" id="ticketSearch" placeholder="Search ticket..." class="search-input">
+            <div class="category-table product-table">
+                <div class="table-head product-head">
+                    <div>Customer</div>
+                    <div>Order</div>
+                    <div>Source</div>
+                    <div>Subject</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                {% for item in tickets %}
+                <div class="table-row ticket-row">
+                    <div>{{ item.customer.name }}</div>
+                    <div>{{ item.order.order_id }}</div>
+                    <div>{{ item.source }}</div>
+                    <div>{{ item.subject }}</div>
+                    <div>{{ item.status }}</div>
+                    <div class="actions">
+                        <a href="{% url 'AdminUpdateSupportTicket' item.unique_code %}" class="btn-edit"><i class="fa-solid fa-edit"></i></a>
+                        <a href="javascript:void(0)" data-id="{{ item.unique_code }}" data-name="{{ item.name }}" class="btn-delete"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row product-row">
+                    <div style="grid-column:span 8;text-align:center;">No support ticket found.</div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Support Ticket</h3>
+                        <p id="deleteText">Are you sure you want to delete this support ticket?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteSupportTicket' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="ticket_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

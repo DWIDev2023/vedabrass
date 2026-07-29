@@ -1,0 +1,165 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Chat FAQs{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Update FAQ</h2>
+            <form class="category-form" method="POST" action="{% url 'AdminUpdateFaq' faq.unique_code %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" required>
+                        {% for value,label in faq.CATEGORY_CHOICES %}
+                        <option value="{{ value }}" {% if faq.category == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="is_active">
+                        <option value="True" {% if faq.is_active %}selected{% endif %}>Active</option>
+                        <option value="False" {% if not faq.is_active %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Page</label>
+                    <input type="text" name="page" placeholder="Enter Page" value="{{ faq.page }}">
+                </div>
+                <div class="form-group full">
+                    <label>Question</label>
+                    <input type="text" name="question" value="{{ faq.question }}" required>
+                </div>
+                <div class="form-group full">
+                    <label>Answer</label>
+                    <textarea rows="6" name="answer" required>{{ faq.answer }}</textarea>
+                </div>
+                <div class="form-group full">
+                    <label>Keywords</label>
+                    <input type="text" name="keywords" value="{{ faq.keywords }}" placeholder="shipping, delivery, dispatch">
+                </div>
+                <div class="form-group full">
+                    <label>Select Related Product (Optional)</label>
+                    <div class="product-picker">
+                        <div class="product-picker-header">
+                            <div class="picker-search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="adminProductSearch" placeholder="Search by product name, collection or price...">
+                            </div>
+                        </div>
+                        <div class="product-picker-list">
+                            {% for product in products %}
+                            <label class="product-picker-item">
+                                <div class="picker-checkbox">
+                                    <input type="radio" name="products" value="{{ product.id }}" {% if product.id == selected_bundle.id %}checked{% endif %}>
+                                </div>
+                                <div class="picker-image">
+                                    {% if product.images.first %}
+                                    <img src="{{ product.images.first.image.url }}">
+                                    {% endif %}
+                                </div>
+                                <div class="picker-content">
+                                    <h4>{{ product.name }}</h4>
+                                    <div class="picker-meta">
+                                        {% if product.collection %}
+                                        <span>
+                                            <i class="fa-solid fa-layer-group"></i>
+                                            {{ product.collection.name }}
+                                        </span>
+                                        {% endif %}
+                                        {% if product.category %}
+                                        <span>
+                                            <i class="fa-solid fa-tag"></i>
+                                            {{ product.category.name }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="picker-price">
+                                    <strong>
+                                        ₹{{ product.discount_price|default:product.price }}
+                                    </strong>
+                                    {% if product.discount_price %}
+                                    <small>
+                                        ₹{{ product.price }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+                            </label>
+                            {% empty %}
+                            <div class="picker-empty">
+                                <i class="fa-solid fa-box-open"></i>
+                                <h4>No Products Found</h4>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="picker-divider">
+                    <span>OR</span>
+                </div>
+                <div class="form-group full">
+                    <label>Select Related Bundle (Optional)</label>
+                    <div class="bundle-picker">
+                        <div class="bundle-picker-header">
+                            <div class="picker-search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="adminBundleSearch" placeholder="Search bundle...">
+                            </div>
+                        </div>
+                        <div class="bundle-picker-list">
+                            {% for bundle in bundles %}
+                            <label class="bundle-picker-item">
+                                <div class="picker-checkbox">
+                                    <input type="radio" name="bundle" value="{{ bundle.id }}" {% if selected_bundle.id == bundle.id %}checked{% endif %}>
+                                </div>
+                                <div class="picker-content">
+                                    <h4>{{ bundle.name }}</h4>
+                                    <div class="picker-meta">
+                                        <span>
+                                            <i class="fa-solid fa-box-open"></i>
+                                            {{ bundle.products.count }} Products
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="picker-price">
+                                    {% if bundle.discounted_bundle_price %}
+                                    <strong>
+                                        ₹{{ bundle.discounted_bundle_price }}
+                                    </strong>
+                                    <small>
+                                        ₹{{ bundle.bundle_price }}
+                                    </small>
+                                    {% else %}
+                                    <strong>
+                                        ₹{{ bundle.bundle_price }}
+                                    </strong>
+                                    {% endif %}
+                                </div>
+                            </label>
+                            {% empty %}
+                            <div class="picker-empty">
+                                <i class="fa-solid fa-box-open"></i>
+                                <h4>No Bundles Found</h4>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Update FAQ</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

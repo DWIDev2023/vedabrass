@@ -1,0 +1,181 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Add Media{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Add News / Event</h2>
+            <form class="category-form" method="POST" action="{% url 'AdminAddMedia' user.unique_code %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Platform</label>
+                    <select name="platform" required>
+                        <option value="">Select</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Media Type</label>
+                    <select name="media_type" required>
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Media URL</label>
+                    <input type="url" name="media_url" placeholder="https://..." required>
+                </div>
+                <div class="form-group full">
+                    <label>External URL</label>
+                    <input type="url" name="external_url" placeholder="https://...">
+                </div>
+                <div class="form-group full">
+                    <label>Description</label>
+                    <textarea rows="5" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Select Related Product (Optional)</label>
+                    <div class="product-picker">
+                        <div class="product-picker-header">
+                            <div class="picker-search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="adminProductSearch" placeholder="Search by product name, collection or price...">
+                            </div>
+                        </div>
+                        <div class="product-picker-list">
+                            {% for product in products %}
+                            <label class="product-picker-item">
+                                <div class="picker-checkbox">
+                                    <input type="radio" name="products" value="{{ product.id }}" {% if product.id in selected_ids %}checked{% endif %}>
+                                </div>
+                                <div class="picker-image">
+                                    {% if product.images.first %}
+                                        <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                                    {% else %}
+                                        <img src="{% static 'admin/images/no-image.png' %}" alt="">
+                                    {% endif %}
+                                </div>
+                                <div class="picker-content">
+                                    <h4>{{ product.name }}</h4>
+                                    <div class="picker-meta">
+                                        {% if product.collection %}
+                                            <span>
+                                                <i class="fa-solid fa-layer-group"></i>
+                                                {{ product.collection.name }}
+                                            </span>
+                                        {% endif %}
+                                        {% if product.category %}
+                                            <span>
+                                                <i class="fa-solid fa-tag"></i>
+                                                {{ product.category.name }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="picker-price">
+                                    {% if product.discount_price %}
+                                        <strong>
+                                            ₹{{ product.discount_price }}
+                                        </strong>
+                                        <small>
+                                            ₹{{ product.price }}
+                                        </small>
+                                    {% else %}
+                                        <strong>
+                                            ₹{{ product.price }}
+                                        </strong>
+                                    {% endif %}
+                                </div>
+                            </label>
+                            {% empty %}
+                            <div class="picker-empty">
+                                <i class="fa-solid fa-box-open"></i>
+                                <h4>No Products Found</h4>
+                                <p>Please add products first.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <small class="form-help">Search and select one or more products. Selected products will be linked to this record.</small>
+                </div>
+                <div class="form-group">
+                    <label>Select Bundle (Optional)</label>
+                    <div class="bundle-picker">
+                        <div class="bundle-picker-header">
+                            <div class="picker-search">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="adminBundleSearch" placeholder="Search bundle...">
+                            </div>
+                        </div>
+                        <div class="bundle-picker-list">
+                            {% for bundle in bundles %}
+                            <label class="bundle-picker-item">
+                                <div class="picker-checkbox">
+                                    <input type="radio" name="bundle" value="{{ bundle.id }}" {% if selected_bundle == bundle.id %}checked{% endif %}>
+                                </div>
+                                <div class="picker-content">
+                                    <h4>{{ bundle.name }}</h4>
+                                    <div class="picker-meta">
+                                        <span>
+                                            <i class="fa-solid fa-box-open"></i>
+                                            {{ bundle.products.count }} Products
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="picker-price">
+                                    {% if bundle.discounted_bundle_price %}
+                                        <strong>
+                                            ₹{{ bundle.discounted_bundle_price }}
+                                        </strong>
+                                        <small>
+                                            ₹{{ bundle.bundle_price }}
+                                        </small>
+                                    {% else %}
+                                        <strong>
+                                            ₹{{ bundle.bundle_price }}
+                                        </strong>
+                                    {% endif %}
+                                </div>
+                            </label>
+                            {% empty %}
+                            <div class="picker-empty">
+                                <i class="fa-solid fa-box-open"></i>
+                                <h4>No Bundles Found</h4>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="is_active" required>
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Media</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

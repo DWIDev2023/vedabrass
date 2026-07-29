@@ -1,0 +1,101 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Reports Overview{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Reports Overview</h2>
+                    <p class="text-muted">Sales, orders, customers, payments and shipment insights.</p>
+                </div>
+            </div>
+
+            <div class="report-card-grid">
+                <div class="report-card">
+                    <span>Total Revenue</span>
+                    <strong>₹{{ total_revenue|floatformat:2|intcomma }}</strong>
+                </div>
+                <div class="report-card">
+                    <span>Today Revenue</span>
+                    <strong>₹{{ today_revenue|floatformat:2|intcomma }}</strong>
+                </div>
+                <div class="report-card">
+                    <span>This Month Revenue</span>
+                    <strong>₹{{ month_revenue|floatformat:2|intcomma }}</strong>
+                </div>
+                <div class="report-card">
+                    <span>Average Order Value</span>
+                    <strong>₹{{ avg_order_value|floatformat:2|intcomma }}</strong>
+                </div>
+            </div>
+
+            <div class="report-card-grid small">
+                <div class="report-mini"><span>Total Orders</span><strong>{{ total_orders }}</strong></div>
+                <div class="report-mini"><span>Today Orders</span><strong>{{ today_orders }}</strong></div>
+                <div class="report-mini"><span>Paid Orders</span><strong>{{ paid_orders }}</strong></div>
+                <div class="report-mini"><span>Pending Payments</span><strong>{{ pending_orders }}</strong></div>
+                <div class="report-mini"><span>Failed Payments</span><strong>{{ failed_orders }}</strong></div>
+                <div class="report-mini"><span>Cancelled</span><strong>{{ cancelled_orders }}</strong></div>
+                <div class="report-mini"><span>Customers</span><strong>{{ total_customers }}</strong></div>
+                <div class="report-mini"><span>New Today</span><strong>{{ new_customers_today }}</strong></div>
+            </div>
+
+            <div class="reports-links">
+                <a href="{% url 'AdminReportsSales' user.unique_code %}">Sales Report</a>
+                <a href="{% url 'AdminReportsOrders' user.unique_code %}">Orders Report</a>
+                <a href="{% url 'AdminReportsPayments' user.unique_code %}">Payments Report</a>
+                <a href="{% url 'AdminReportsProducts' user.unique_code %}">Products Report</a>
+                <a href="{% url 'AdminReportsCustomers' user.unique_code %}">Customers Report</a>
+                <a href="{% url 'AdminReportsShipments' user.unique_code %}">Shipments Report</a>
+                <a href="{% url 'AdminReportsNotifications' user.unique_code %}">Notifications Report</a>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Recent Orders</h3>
+                <div class="report-export-actions">
+                    <button type="button" class="export-btn" data-export="csv">CSV</button>
+                    <button type="button" class="export-btn" data-export="excel">Excel</button>
+                    <button type="button" class="export-btn" data-export="copy">Copy</button>
+                    <button type="button" class="export-btn" data-export="print">Print</button>
+                </div>
+                <div class="category-table eport-export-table" style="--table-columns: 1.1fr 1.2fr .8fr .8fr .8fr .9fr;">
+                    <div class="table-head">
+                        <div>Order ID</div>
+                        <div>Customer</div>
+                        <div>Total</div>
+                        <div>Payment</div>
+                        <div>Status</div>
+                        <div>Date</div>
+                    </div>
+
+                    {% for order in recent_orders %}
+                    <div class="table-row">
+                        <div><a href="{% url 'AdminViewOrder' code=user.unique_code cid=order.unique_code %}">{{ order.order_id }}</a></div>
+                        <div>{{ order.customer.name|default:"—" }}</div>
+                        <div>₹{{ order.total|floatformat:2|intcomma }}</div>
+                        <div><span class="status-badge {{ order.payment_status|lower }}">{{ order.payment_status }}</span></div>
+                        <div><span class="status-badge {{ order.status|lower }}">{{ order.status }}</span></div>
+                        <div>{{ order.created_at|date:"d M Y" }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No orders found.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

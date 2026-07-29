@@ -1,0 +1,126 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | All Customers{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Customer Details</h2>
+                    <p class="text-muted">{{ customer.name }}</p>
+                </div>
+
+                <div class="header-actions">
+                    <a href="{% url 'AdminEditCustomer' customer.unique_code %}" class="btn-secondary"><i class="fa-solid fa-pen"></i> Edit Customer</a>
+                    <a href="{% url 'AdminCustomers' user.unique_code %}" class="btn-primary">Back to Customers</a>
+                </div>
+            </div>
+
+            <div class="order-view-grid">
+                <div class="dashboard-card">
+                    <h3>Customer Information</h3>
+                    <p><strong>Name:</strong> {{ customer.name }}</p>
+                    <p><strong>Email:</strong> {{ customer.email }}</p>
+                    <p><strong>Mobile:</strong> {{ customer.mobile }}</p>
+                    <p><strong>Company:</strong> {{ customer.company_name|default:"—" }}</p>
+                    <p><strong>GST:</strong> {{ customer.gst_number|default:"—" }}</p>
+                    <p><strong>Joined:</strong> {{ customer.created_at|date:"d M Y" }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Order Summary</h3>
+                    <p><strong>Total Orders:</strong> {{ customer.orders.count }}</p>
+                    <p><strong>Customer Code:</strong> {{ customer.unique_code }}</p>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Addresses</h3>
+                <div class="category-table" style="--table-columns: 1fr 2fr 1fr 1fr 1fr 0.8fr;">
+                    <div class="table-head">
+                        <div>Type</div>
+                        <div>Address</div>
+                        <div>City</div>
+                        <div>State</div>
+                        <div>Default</div>
+                        <div>Actions</div>
+                    </div>
+                    {% for address in customer.addresses.all %}
+                    <div class="table-row">
+                        <div>{{ address.address_type }}</div>
+                        <div>
+                            {{ address.address_line_1 }}
+                            {% if address.address_line_2 %}, {{ address.address_line_2 }}{% endif %}
+                            {% if address.landmark %}<br><small>{{ address.landmark }}</small>{% endif %}
+                        </div>
+                        <div>{{ address.city }}</div>
+                        <div>{{ address.state }}</div>
+                        <div>
+                            {% if address.is_default %}
+                                <span class="status active">Yes</span>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </div>
+                        <div class="actions">
+                            <a href="{% url 'AdminEditCustomerAddress' address.unique_code %}" class="btn-edit"><i class="fa-solid fa-edit"></i></a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div style="grid-column: span 6; text-align:center; color:var(--text-muted);">
+                            No addresses found.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Orders</h3>
+                <div class="category-table" style="--table-columns: 1fr 1fr 1fr 1fr 0.8fr;">
+                    <div class="table-head">
+                        <div>Order ID</div>
+                        <div>Total</div>
+                        <div>Status</div>
+                        <div>Date</div>
+                        <div>Actions</div>
+                    </div>
+                    {% for order in customer.orders.all %}
+                    <div class="table-row">
+                        <div>{{ order.order_id }}</div>
+                        <div>₹{{ order.total }}</div>
+                        <div>
+                            <span class="status-badge {{ order.status|lower }}">
+                                {{ order.status }}
+                            </span>
+                        </div>
+                        <div>{{ order.created_at|date:"d M Y" }}</div>
+                        <div class="actions">
+                            <a href="{% url 'AdminViewOrder' code=user.unique_code cid=order.unique_code %}" class="btn-edit">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div style="grid-column: span 5; text-align:center; color:var(--text-muted);">
+                            No orders found.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

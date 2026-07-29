@@ -1,0 +1,37 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Collections</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <a href="{% url 'Categories' %}">All Categories</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>{{ subcategory.name }}</strong>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Collections</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="vb-category-section">
+        <div class="container-fluid">
+            <div class="vb-category-grid">
+                {% for collection in collections %}
+                <a href="{% url 'ProductsByCategory' 'idols-and-statues' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        {% if collection.image %}
+                        <img src="{{ collection.image.url }}" alt="{{ collection.name }}">
+                        {% endif %}
+                    </div>
+                    <h3>{{ collection.name }}</h3>
+                    <span>Explore Collection</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

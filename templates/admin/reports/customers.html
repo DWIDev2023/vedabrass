@@ -1,0 +1,84 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Customer Report{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Customer Report</h2>
+                    <p class="text-muted">Track customer value, repeat buyers and order history.</p>
+                </div>
+
+                <a href="{% url 'AdminReports' user.unique_code %}" class="btn-primary">Back to Reports</a>
+            </div>
+
+            <div class="report-card-grid small">
+                <div class="report-mini">
+                    <span>Total Customers</span>
+                    <strong>{{ total_customers }}</strong>
+                </div>
+                <div class="report-mini">
+                    <span>Repeat Customers</span>
+                    <strong>{{ repeat_customers }}</strong>
+                </div>
+                <div class="report-mini">
+                    <span>One-Time Customers</span>
+                    <strong>{{ one_time_customers }}</strong>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Customer Value</h3>
+                <div class="report-export-actions">
+                    <button type="button" class="export-btn" data-export="csv">CSV</button>
+                    <button type="button" class="export-btn" data-export="excel">Excel</button>
+                    <button type="button" class="export-btn" data-export="copy">Copy</button>
+                    <button type="button" class="export-btn" data-export="print">Print</button>
+                </div>
+                <div class="category-table eport-export-table" style="--table-columns: 1.5fr 1.2fr .8fr 1fr 1fr;">
+                    <div class="table-head">
+                        <div>Customer</div>
+                        <div>Contact</div>
+                        <div>Orders</div>
+                        <div>Total Spent</div>
+                        <div>Last Order</div>
+                    </div>
+                    {% for customer in customers %}
+                    <div class="table-row">
+                        <div>
+                            <strong>{{ customer.name }}</strong><br>
+                            <small>{{ customer.email }}</small>
+                        </div>
+                        <div>{{ customer.mobile|default:"—" }}</div>
+                        <div>{{ customer.total_orders|default:0 }}</div>
+                        <div>₹{{ customer.total_spent|default:0|floatformat:2|intcomma }}</div>
+                        <div>
+                            {% if customer.last_order_date %}
+                                {{ customer.last_order_date|date:"d M Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No customers found.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

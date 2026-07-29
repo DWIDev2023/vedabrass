@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Tracking Details</title>
+  </head>
+  <body style="margin: 0;padding: 0;background: #f8f4ee;font-family: Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <table width="700" cellpadding="0" cellspacing="0" style="background: #ffffff;margin: 30px auto;border-radius: 10px;overflow: hidden;">
+            
+            <tr>
+              <td style="background: #442d1c;padding: 30px;text-align: center;color: #fff;">
+                <h1 style="margin: 0">Your Order Is On The Way</h1>
+                <p style="margin-top: 10px">Order ID: {{ order.order_id }}</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 30px">
+                <p>Hello {{ customer.name }},</p>
+
+                <p>
+                  Your Vedabrass order has been shipped. You can now track your shipment using the details below.
+                </p>
+
+                <h3>Shipment Details</h3>
+
+                <table width="100%" cellpadding="8" cellspacing="0" border="1" style="border-collapse: collapse">
+                  <tr>
+                    <th align="left">Courier Partner</th>
+                    <td>{{ order.shiprocket_courier_name|default:"Courier Assigned" }}</td>
+                  </tr>
+
+                  <tr>
+                    <th align="left">AWB Number</th>
+                    <td>{{ order.shiprocket_awb_code|default:"Not Available" }}</td>
+                  </tr>
+
+                  <tr>
+                    <th align="left">Shipment Status</th>
+                    <td>{{ order.shipment_status|default:"In Progress" }}</td>
+                  </tr>
+                </table>
+
+                <br />
+
+                {% if order.tracking_url %}
+                <p style="text-align: center;margin: 30px 0;">
+                  <a href="{{ order.tracking_url }}" target="_blank" style="background: #84592b;color: #ffffff;text-decoration: none;padding: 14px 28px;border-radius: 30px;font-weight: bold;display: inline-block;">
+                    Track Your Shipment
+                  </a>
+                </p>
+                {% endif %}
+
+                <p>
+                  If the tracking link is not updated immediately, please check again after some time as courier tracking may take a few hours to reflect.
+                </p>
+
+                <p>
+                  Thank you for choosing Vedabrass.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background: #442d1c;color: #fff;padding: 20px;text-align: center;">
+                Vedabrass
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

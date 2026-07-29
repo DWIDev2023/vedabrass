@@ -1,0 +1,164 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | All Orders{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Order Details</h2>
+                    <p class="text-muted">Order ID: {{ order.order_id }}</p>
+                </div>
+                <div class="actions">
+                    <a href="{% url 'AdminEditOrder' order.unique_code %}" class="btn-primary"><i class="fa-solid fa-pen"></i> Edit</a>
+                    <a href="{% url 'AdminOrders' user.unique_code %}" class="btn-primary">Back to Orders</a>
+                </div>
+            </div>
+
+            <div class="order-view-grid">
+                <div class="dashboard-card">
+                    <h3>Customer Details</h3>
+                    <p><strong>Name:</strong> {{ order.customer.name }}</p>
+                    <p><strong>Email:</strong> {{ order.customer.email }}</p>
+                    <p><strong>Mobile:</strong> {{ order.customer.mobile }}</p>
+                    <p><strong>Company:</strong> {{ order.customer.company_name|default:"—" }}</p>
+                    <p><strong>GST:</strong> {{ order.customer.gst_number|default:"—" }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Order Summary</h3>
+                    <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                    <p><strong>Status:</strong> <span class="status-badge {{ order.status|lower }}">{{ order.status }}</span></p>
+                    <p><strong>Subtotal:</strong> ₹{{ order.subtotal }}</p>
+                    <p><strong>Shipping:</strong> ₹{{ order.shipping }}</p>
+                    <p><strong>Total:</strong> ₹{{ order.total }}</p>
+                    <p><strong>Date:</strong> {{ order.created_at|date:"d M Y, h:i A" }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Payment Details</h3>
+                    <p><strong>Payment Status:</strong> <span class="status-badge {{ order.payment_status|lower }}">{{ order.payment_status }}</span></p>
+                    <p><strong>Payment Mode:</strong> {{ order.payment_mode|default:"—" }}</p>
+                    <p><strong>PayU Txn ID:</strong> {{ order.payu_txnid|default:"—" }}</p>
+                    <p><strong>PayU Payment ID:</strong> {{ order.payu_mihpayid|default:"—" }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Shiprocket Details</h3>
+                    <p><strong>Shipment Status:</strong> {{ order.shipment_status|default:"—" }}</p>
+                    <p><strong>Shiprocket Order ID:</strong> {{ order.shiprocket_order_id|default:"—" }}</p>
+                    <p><strong>Shipment ID:</strong> {{ order.shiprocket_shipment_id|default:"—" }}</p>
+                    <p><strong>AWB Code:</strong> {{ order.shiprocket_awb_code|default:"—" }}</p>
+                    <p><strong>Courier:</strong> {{ order.shiprocket_courier_name|default:"—" }}</p>
+                    {% if order.tracking_url %}
+                    <p><strong>Tracking:</strong> <a href="{{ order.tracking_url }}" target="_blank">Open Tracking</a></p>
+                    {% else %}
+                    <p><strong>Tracking:</strong> Not generated yet</p>
+                    {% endif %}
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Billing Address</h3>
+                    <p>{{ order.billing_address.address_line_1 }}</p>
+                    <p>{{ order.billing_address.address_line_2|default:"" }}</p>
+                    <p>{{ order.billing_address.landmark|default:"" }}</p>
+                    <p>{{ order.billing_address.city }}, {{ order.billing_address.state }}</p>
+                    <p>{{ order.billing_address.country }} - {{ order.billing_address.postal_code }}</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Shipping Address</h3>
+                    <p>{{ order.shipping_address.address_line_1 }}</p>
+                    <p>{{ order.shipping_address.address_line_2|default:"" }}</p>
+                    <p>{{ order.shipping_address.landmark|default:"" }}</p>
+                    <p>{{ order.shipping_address.city }}, {{ order.shipping_address.state }}</p>
+                    <p>{{ order.shipping_address.country }} - {{ order.shipping_address.postal_code }}</p>
+                </div>
+            </div>
+
+            <div class="dashboard-card shipment-actions-card">
+                <h3>Shipment Actions</h3>
+                <div class="shipment-actions">
+                    {% if order.payment_status == "Paid" and not order.shiprocket_shipment_id %}
+                    <a href="{% url 'AdminCreateShipment' order.unique_code %}" class="btn-primary">Create Shiprocket Order</a>
+                    {% endif %}
+                    {% if order.shiprocket_shipment_id and not order.shiprocket_awb_code %}
+                    <a href="{% url 'AdminAssignAWB' order.unique_code %}" class="btn-primary">Assign AWB</a>
+                    {% endif %}
+                    {% if order.shiprocket_awb_code %}
+                    <a href="{% url 'AdminRefreshTracking' order.unique_code %}" class="btn-primary">Refresh Tracking</a>
+                    <a href="{% url 'AdminGeneratePickup' order.unique_code %}" class="btn-primary">Generate Pickup</a>
+                    <a href="{% url 'AdminGenerateLabel' order.unique_code %}" class="btn-primary">Generate Label</a>
+                    <a href="{% url 'AdminGenerateInvoice' order.unique_code %}" class="btn-primary">Generate Invoice</a>
+                    {% endif %}
+                    {% if order.tracking_url %}
+                    <a href="{% url 'AdminSendTrackingEmail' order.unique_code %}" class="btn-primary">Send Tracking Email</a>
+                    {% endif %}
+                    {% if order.shiprocket_label_url %}
+                    <a href="{{ order.shiprocket_label_url }}" target="_blank" class="btn-primary">Download Label</a>
+                    {% endif %}
+                    {% if order.shiprocket_invoice_url %}
+                    <a href="{{ order.shiprocket_invoice_url }}" target="_blank" class="btn-primary">Download Invoice</a>
+                    {% endif %}
+                    {% if order.payment_status == "Paid" %}
+                    <a href="{% url 'AdminViewInvoice' order.unique_code %}" class="btn-primary" target="_blank">View Invoice</a>
+                    <a href="{% url 'AdminViewInvoice' order.unique_code %}" class="btn-primary" target="_blank">Download Invoice</a>
+                    <a href="{% url 'AdminEmailInvoice' order.unique_code %}" class="btn-primary">Email Invoice</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="category-table" style="--table-columns: 1.8fr 0.8fr 0.8fr 0.8fr;margin-bottom:30px;">
+                <div class="table-head">
+                    <div>Product</div>
+                    <div>Qty</div>
+                    <div>Price</div>
+                    <div>Total</div>
+                </div>
+
+                {% for item in order.items.all %}
+                <div class="table-row">
+                    <div class="cart-product">
+                        {% if item.product.ordered_images %}
+                        <img src="{{ item.product.ordered_images.0.image.url }}" class="thumb" alt="{{ item.product.ordered_images.0.alt_text|default:item.product.name }}">
+                        {% endif %}
+                        <div>
+                            <strong>{{ item.product.name }}</strong><br>
+                            <small>{{ item.product.product_code }}</small>
+                        </div>
+                    </div>
+
+                    <div>{{ item.quantity }}</div>
+                    <div>₹{{ item.price }}</div>
+                    <div>₹{{ item.total }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Notification History</h3>
+
+                {% for log in context_logs %}
+                <div class="log-row">
+                    <strong>{{ log.channel }}</strong>
+                    <span>{{ log.event }}</span>
+                    <span>{{ log.status }}</span>
+                    <small>{{ log.created_at|date:"d M Y h:i A" }}</small>
+                </div>
+                {% empty %}
+                <p>No notifications sent.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

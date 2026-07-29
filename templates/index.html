@@ -1,0 +1,646 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="hero">
+        <div class="hero-slider" id="heroSlider">
+            <div class="slide">
+                <picture>
+                    <source media="(max-width:768px)" srcset="{% static 'front/images/banners/mobbanner1.jpg' %}">
+                    <img src="{% static 'front/images/banners/banner1.jpg' %}" alt="Authentic handmade brass products crafted in India by VedaBrass">
+                </picture>
+            </div>
+            <div class="slide">
+                <picture>
+                    <source media="(max-width:768px)" srcset="{% static 'front/images/banners/mobbanner2.jpg' %}">
+                    <img src="{% static 'front/images/banners/banner2.jpg' %}" alt="Close-up of handcrafted products showing intricate brass detailing">
+                </picture>
+            </div>
+            <div class="slide">
+                <picture>
+                    <source media="(max-width:768px)" srcset="{% static 'front/images/banners/mobbanner3.jpg' %}">
+                    <img src="{% static 'front/images/banners/banner3.jpg' %}" alt="Brass products for home decore, gifting and spiritual spaces">
+                </picture>
+            </div>
+        </div>
+
+        <button class="hero-btn prev" onclick="moveSlide(-1)"><i class="fa-solid fa-long-arrow-left"></i></button>
+        <button class="hero-btn next" onclick="moveSlide(1)"><i class="fa-solid fa-long-arrow-right"></i></button>
+
+        <div class="hero-dots" id="heroDots"></div>
+    </section>
+
+    <section class="vb-category-section">
+        <div class="container-fluid">
+            <div class="vb-category-grid">
+                <a href="{% url 'ProductsByCategory' 'idols-and-statues' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/idols.png' %}" alt="Idols & Statues">
+                    </div>
+                    <h3>Idols &amp; Statues</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsByCategory' 'kitchen-essentials' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/kitchen.png' %}" alt="Kitchen Essentials">
+                    </div>
+                    <h3>Kitchen Essentials</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsByCategory' 'home-decore' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/home.png' %}" alt="Home Decor">
+                    </div>
+                    <h3>Home Decore</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsByCategory' 'pooja-essentials' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/pooja.png' %}" alt="Pooja Essentials">
+                    </div>
+                    <h3>Pooja Essentials</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'Subcategory' 'gifting-items' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/gifts.png' %}" alt="Gifting Items">
+                    </div>
+                    <h3>Gifting Items</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsPremiumCollection' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/premium.png' %}" alt="Premium Collection">
+                    </div>
+                    <h3>Premium Collection</h3>
+                    <span>Explore Collection</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-collections">
+        <div class="container-fluid">
+            <div class="vb-section-heading">
+                <span>CURATED COLLECTIONS</span>
+                <h2>Gifting That Leaves <strong>Lasting Impression</strong></h2>
+                <p>Thoughtfully handcrafted brass collections curated for every occasion.</p>
+            </div>
+            <div class="vb-collection-grid">
+                <a href="{% url 'Collections' 'corporate-gifting' %}" class="vb-collection-card">
+                    <div class="vb-product-bg"></div>
+                    <div class="vb-product">
+                        <img src="{% static 'front/images/gifting/corporate.png' %}" alt="Corporate Gifting">
+                    </div>
+                    <div class="vb-card-content">
+                        <small>Corporate Collection</small>
+                        <div class="vb-line"></div>
+                        <h3>Corporate Gifting</h3>
+                        <p>Premium handcrafted brass gifts curated for clients, employees and festive celebrations.</p>
+                        <span class="vb-link">
+                            Explore Collection
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 12H19"/>
+                                <path d="M13 6L19 12L13 18"/>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+                <a href="{% url 'Collections' 'festival-gifts' %}" class="vb-collection-card">
+                    <div class="vb-product-bg"></div>
+                    <div class="vb-product">
+                        <img src="{% static 'front/images/gifting/festival.png' %}" alt="Festival Gifting">
+                    </div>
+                    <div class="vb-card-content">
+                        <small>Festival Collection</small>
+                        <div class="vb-line"></div>
+                        <h3>Festival Gifting</h3>
+                        <p>Beautiful brass idols and pooja gifts inspired by India's timeless traditions.</p>
+                        <span class="vb-link">
+                            Explore Collection
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 12H19"/>
+                                <path d="M13 6L19 12L13 18"/>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+                <a href="{% url 'Collections' 'special-occassion-gifts' %}" class="vb-collection-card">
+                    <div class="vb-product-bg"></div>
+                    <div class="vb-product">
+                        <img src="{% static 'front/images/gifting/special.png' %}" alt="Special Gifting">
+                    </div>
+                    <div class="vb-card-content">
+                        <small>Special Occasion</small>
+                        <div class="vb-line"></div>
+                        <h3>Memorable Gifts</h3>
+                        <p>Elegant handcrafted brass gifts for weddings, anniversaries and housewarming celebrations.</p>
+                        <span class="vb-link">
+                            Explore Collection
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 12H19"/>
+                                <path d="M13 6L19 12L13 18"/>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-signature-products">
+        <div class="container-fluid">
+            <div class="vb-section-heading">
+                <span>Our Top Trending Products</span>
+                <h2>Handcrafted Brass Treasures</h2>
+                <p>Discover timeless brass masterpieces handcrafted by skilled artisans using traditional techniques.</p>
+            </div>
+            <div class="vb-product-grid">
+                {% for trend in trending_products %}
+                <a href="{% url 'ProductDetails' trend.slug %}" class="vb-product-card">
+                    {% if trend.discount_price and trend.discount_price < trend.price %}
+                    <span class="vb-discount">SAVE {{ trend.discount_percentage }}%</span>
+                    {% endif %}
+                    <div class="vb-image-area">
+                        <div class="vb-image-glow"></div>
+                        {% if trend.ordered_images %}
+                        <img src="{{ trend.ordered_images.0.image.url }}" alt="{{ trend.ordered_images.0.alt_text|default:trend.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="vb-product-content">
+                        <span class="vb-category">{{ trend.collection.name }}</span>
+                        <h3>{{ trend.name }}</h3>
+                        <div class="vb-price">
+                            {% if trend.discount_price and trend.discount_price < trend.price %}
+                            <span class="current">₹{{ trend.discount_price|intcomma }}</span>
+                            <span class="old">₹{{ trend.price|intcomma }}</span>
+                            {% else %}
+                            <span class="current">₹{{ trend.price|intcomma }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="vb-product-actions">
+                            <button class="vb-cart-btn add-to-cart-btn" data-slug="{{ trend.unique_code }}">Add to Cart</button>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            <div class="vb-product-footer">
+                <a href="{% url 'Products' %}" class="vb-outline-btn">
+                    <span>View All Products</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12H19"/>
+                        <path d="M13 6L19 12L13 18"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-craftsmanship">
+        <div class="vb-craft-image">
+            <img src="{% static 'front/images/craftsmanship.jpg' %}" alt="VedaBrass Artisans">
+            <div class="vb-craft-overlay"></div>
+            <div class="vb-craft-content">
+                <span class="vb-craft-label">Our Heritage</span>
+                <h2>Crafted By Hands. <span>Guided By Tradition.</span></h2>
+                <p>Every VedaBrass creation begins in the workshops of experienced Indian artisans. From shaping raw brass to intricate engraving and polishing, every piece is handcrafted using techniques passed down through generations.</p>
+                <a href="{% url 'WhoWeAre' %}" class="vb-craft-btn">
+                    Discover Our Story
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 12H19"></path>
+                        <path d="M13 6L19 12L13 18"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-festival-section">
+        <div class="container-fluid">
+            <div class="vb-section-heading">
+                <span>Festival Collections</span>
+                <h2>Celebrate Every Tradition</h2>
+                <p>Thoughtfully curated handcrafted brass collections for India's most cherished festivals and celebrations.</p>
+            </div>
+            <div class="vb-festival-grid">
+                {% for gift in gift_collections %}
+                <a href="{% url 'ProductsByCollection' gift.slug %}" class="vb-festival-card">
+                    <div class="vb-festival-glow"></div>
+                    <div class="vb-festival-product">
+                        {% if gift.image %}
+                        <img src="{{ gift.image.url }}" alt="{{ gift.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="vb-festival-content">
+                        <span class="vb-festival-name">{{ gift.name }}</span>
+                        <p>{{ gift.description }}</p>
+                        <span class="vb-festival-link">
+                            Explore Collection
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 12H19"/>
+                                <path d="M13 6L19 12L13 18"/>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="vb-product-footer">
+            <a href="{% url 'Collections' 'festival-gifts' %}" class="vb-outline-btn">
+                <span>View All Collection</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12H19"/>
+                    <path d="M13 6L19 12L13 18"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <section class="vb-final-cta">
+        <div class="vb-final-overlay"></div>
+        <div class="container">
+            <div class="vb-final-content">
+                <span class="vb-final-tag">Crafted For Generations</span>
+                <h2>Bring Timeless Elegance <span>Into Every Home</span></h2>
+                <p>Discover handcrafted brass masterpieces that celebrate India's rich heritage while adding warmth, spirituality and luxury to modern living spaces.</p>
+                <div class="vb-final-actions">
+                    <a href="{% url 'Products' %}" class="vb-btn-primary">
+                        Explore Collection
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 12H19"/>
+                            <path d="M13 6L19 12L13 18"/>
+                        </svg>
+                    </a>
+                    <a href="{% url 'Contact' %}" class="vb-btn-secondary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-signature-products">
+        <div class="container-fluid">
+            <div class="vb-section-heading">
+                <span>Featured Collections</span>
+                <h2>Stone Idols Collection</h2>
+                <p>Discover handcrafted stone idols designed with timeless artistry, spiritual elegance, and intricate detailing.</p>
+            </div>
+            <div class="vb-product-grid">
+                {% for product in stone_products %}
+                <a href="{% url 'ProductDetails' product.slug %}" class="vb-product-card">
+                    <span class="vb-discount">SAVE 22%</span>
+                    <div class="vb-image-area">
+                        <div class="vb-image-glow"></div>
+                        {% if product.ordered_images %}
+                        <img src="{{ product.ordered_images.0.image.url }}" alt="{{ product.ordered_images.0.alt_text|default:product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="vb-product-content">
+                        <span class="vb-category">{{ product.collection.name }}</span>
+                        <h3>{{ product.name }}</h3>
+                        <div class="vb-price">
+                            {% if product.discount_price and product.discount_price < product.price %}
+                            <span class="current">₹{{ product.discount_price|intcomma }}</span>
+                            <span class="old">₹{{ product.price|intcomma }}</span>
+                            {% else %}
+                            <span class="current">₹{{ product.price|intcomma }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="vb-product-actions">
+                            <button class="vb-cart-btn add-to-cart-btn" data-slug="{{ product.unique_code }}">Add to Cart</button>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="vb-product-footer">
+            <a href="{% url 'ProductsBySubcategory' 'stone-idols' %}" class="vb-outline-btn">
+                <span>View All Products</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12H19"/>
+                    <path d="M13 6L19 12L13 18"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <section class="special-section">
+        <div class="vb-section-heading">
+            <h2>Our Specialities</h2>
+            <p>Crafted with devotion, designed with elegance, and created to bring timeless beauty into every space.</p>
+        </div>
+        <div class="special-grid">
+            <div class="special-card">
+                <div class="card-image">
+                    <img src="{% static 'front/images/tip1.jpg' %}" alt="Carefully Crafted Artistry">
+                </div>
+                <div class="card-content">
+                    <h3>Carefully Crafted Artistry</h3>
+                    <p>Every piece is shaped with precision and attention to detail, preserving authenticity and timeless elegance.</p>
+                </div>
+            </div>
+            <div class="special-card featured">
+                <div class="card-image">
+                    <img src="{% static 'front/images/tip2.jpg' %}" alt="Wrapped in Grace">
+                </div>
+                <div class="card-content">
+                    <h3>Wrapped in Grace</h3>
+                    <p>Elegant finishing and refined presentation create a luxurious experience in every creation.</p>
+                </div>
+            </div>
+            <div class="special-card">
+                <div class="card-image">
+                    <img src="{% static 'front/images/tip3.jpg' %}" alt="Empathy in Action">
+                </div>
+                <div class="card-content">
+                    <h3>Empathy in Action</h3>
+                    <p>Thoughtful craftsmanship and care ensure every product feels meaningful and personal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-category-section section-two">
+        <div class="container-fluid">
+            <div class="vb-section-heading two">
+                <h2>Home Decore Collection</h2>
+            </div>
+            <div class="vb-category-grid2">
+                <a href="{% url 'ProductsBySubcategory' 'urli' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/urli.png' %}" alt="Idols & Statues">
+                    </div>
+                    <h3>Urli</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'wall-decor' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/wall-decore.png' %}" alt="Kitchen Essentials">
+                    </div>
+                    <h3>Wall Decore</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'table-decor' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/table-decore.png' %}" alt="Home Decor">
+                    </div>
+                    <h3>Table Decore</h3>
+                    <span>Explore Collection</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-category-section section-two">
+        <div class="container-fluid">
+            <div class="vb-section-heading two">
+                <h2>Pooja Essentials Collection</h2>
+            </div>
+            <div class="vb-category-grid3">
+                <a href="{% url 'ProductsBySubcategory' 'kalash' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/kalash.png' %}" alt="Idols & Statues">
+                    </div>
+                    <h3>Kalash</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'diyas-and-lamps' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/diyas.png' %}" alt="Kitchen Essentials">
+                    </div>
+                    <h3>Diyas &amp; Lamps</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'chowki' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/chowki.png' %}" alt="Home Decor">
+                    </div>
+                    <h3>Chowki</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'asan' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/asan.png' %}" alt="Idols & Statues">
+                    </div>
+                    <h3>Asan</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'bells' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/bells.png' %}" alt="Kitchen Essentials">
+                    </div>
+                    <h3>Bells</h3>
+                    <span>Explore Collection</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="vb-category-section section-two">
+        <div class="container-fluid">
+            <div class="vb-section-heading two">
+                <h2>Kitchen Essentials Collection</h2>
+            </div>
+            <div class="vb-category-grid2">
+                <a href="{% url 'ProductsBySubcategory' 'serveware' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/serveware.png' %}" alt="Idols & Statues">
+                    </div>
+                    <h3>Serveware</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'cookware' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/cookware.png' %}" alt="Kitchen Essentials">
+                    </div>
+                    <h3>Cookware</h3>
+                    <span>Explore Collection</span>
+                </a>
+                <a href="{% url 'ProductsBySubcategory' 'drinkware' %}" class="vb-category-card">
+                    <div class="vb-category-image">
+                        <img src="{% static 'front/images/categories/drinkware.png' %}" alt="Home Decor">
+                    </div>
+                    <h3>Drinkware</h3>
+                    <span>Explore Collection</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="insta-section">
+        <div class="insta-container">
+            <div class="insta-header">
+                <span>Follow Our Journey</span>
+                <h2>Instagram Reels</h2>
+                <p>Discover our latest creations, craftsmanship moments, styling ideas, and divine décor inspirations.</p>
+            </div>
+            <div class="insta-slider">
+                <div class="insta-track">
+                    <a href="#" class="insta-card">
+                        <img src="img1.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>New Arrival</span>
+                            <h3>Brass Idol Styling</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img2.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Behind The Craft</span>
+                            <h3>Handcrafted Details</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img3.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Home Décor</span>
+                            <h3>Sacred Corners</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img4.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Gifting</span>
+                            <h3>Festive Inspirations</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="insta-card">
+                        <img src="img5.jpg" alt="">
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                        <div class="reel-content">
+                            <span>Collection</span>
+                            <h3>Timeless Brass Art</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="insta-cta">
+                <a href="#" target="_blank" rel="noopener noreferrer" title="Follow on Instagram">Follow on Instagram <i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="testimonial-wrap">
+            <div class="testimonial-header">
+                <div>
+                    <span>Customer Love</span>
+                    <h2>What Our Customers Say</h2>
+                    <p>Real experiences from people who brought our handcrafted pieces home.</p>
+                </div>
+                <div class="rating-box">
+                    <span class="google">Google</span>
+                    <strong>5.0</strong>
+                    <span class="stars">★★★★★</span>
+                </div>
+            </div>
+            <div class="testimonial-control-row">
+                <button class="testimonial-btn" id="testimonialPrev">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button class="testimonial-btn" id="testimonialNext">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="testimonial-slider" id="testimonialSlider">
+                <div class="testimonial-track">
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>Beautiful pieces</p>
+                        <div class="user">
+                            <div class="avatar">S</div>
+                            <div>
+                                <h4>Anandini Subbu</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>Very warm welcome. Great choices of antique pieces of all sizes.</p>
+                        <div class="user">
+                            <div class="avatar">V</div>
+                            <div>
+                                <h4>Veda Vedarattiname</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>I had a wonderful experience with VedaBrass.</p>
+                        <div class="user">
+                            <div class="avatar">P</div>
+                            <div>
+                                <h4>Preeti Shankar</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="quote">“</div>
+                        <p>Beautiful collection and premium finishing. Loved the detailing.</p>
+                        <div class="user">
+                            <div class="avatar">A</div>
+                            <div>
+                                <h4>Anand Kumar</h4>
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if faqs %}
+    <section class="vb-faq-section">
+        <div class="vb-faq-container">
+            <div class="section-header">
+                <span class="section-tag">Frequently Asked Questions</span>
+                <h2>Need Help?</h2>
+                <p>Find answers to the most common questions about our handcrafted brass collections, orders, shipping and care.</p>
+            </div>
+            <div class="vb-faq-list">
+                {% for faq in faqs %}
+                <article class="vb-faq-item {% if forloop.first %}active{% endif %}">
+                    <button class="vb-faq-question">
+                        <span class="vb-faq-number">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </span>
+                        <span class="vb-faq-title">
+                            {{ faq.question }}
+                        </span>
+                        <span class="vb-faq-icon">
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </button>
+                    <div class="vb-faq-answer">
+                        <div class="vb-faq-answer-inner">
+                            {{ faq.answer|safe }}
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}

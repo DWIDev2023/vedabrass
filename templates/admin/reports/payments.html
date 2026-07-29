@@ -1,0 +1,153 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Payments Report{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Payments Report</h2>
+                    <p class="text-muted">PayU transactions, payment modes and payment status overview.</p>
+                </div>
+
+                <a href="{% url 'AdminReports' user.unique_code %}" class="btn-primary">Back to Reports</a>
+            </div>
+
+            <form method="GET" class="report-filter-card">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Payment Status</label>
+                        <select name="payment_status">
+                            <option value="">All</option>
+                            <option value="Pending" {% if payment_status == "Pending" %}selected{% endif %}>Pending</option>
+                            <option value="Paid" {% if payment_status == "Paid" %}selected{% endif %}>Paid</option>
+                            <option value="Failed" {% if payment_status == "Failed" %}selected{% endif %}>Failed</option>
+                            <option value="Refunded" {% if payment_status == "Refunded" %}selected{% endif %}>Refunded</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Payment Mode</label>
+                        <select name="payment_mode">
+                            <option value="">All</option>
+                            <option value="PayU" {% if payment_mode == "PayU" %}selected{% endif %}>PayU</option>
+                            <option value="UPI" {% if payment_mode == "UPI" %}selected{% endif %}>UPI</option>
+                            <option value="CARD" {% if payment_mode == "CARD" %}selected{% endif %}>Card</option>
+                            <option value="NB" {% if payment_mode == "NB" %}selected{% endif %}>Net Banking</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Apply</button>
+                </div>
+            </form>
+
+            <div class="report-card-grid">
+                <div class="report-card">
+                    <span>Paid Amount</span>
+                    <strong>₹{{ paid_amount|floatformat:2|intcomma }}</strong>
+                </div>
+                <div class="report-card">
+                    <span>Pending Amount</span>
+                    <strong>₹{{ pending_amount|floatformat:2|intcomma }}</strong>
+                </div>
+                <div class="report-card">
+                    <span>Failed Amount</span>
+                    <strong>₹{{ failed_amount|floatformat:2|intcomma }}</strong>
+                </div>
+                <div class="report-card">
+                    <span>Total Payment Records</span>
+                    <strong>{{ total_payments }}</strong>
+                </div>
+            </div>
+
+            <div class="report-card-grid small">
+                <div class="report-mini">
+                    <span>Pending Payments</span>
+                    <strong>{{ pending_count }}</strong>
+                </div>
+                <div class="report-mini">
+                    <span>Abandoned Payments</span>
+                    <strong>{{ abandoned_payments }}</strong>
+                </div>
+                <div class="report-mini">
+                    <span>Recovered Payments</span>
+                    <strong>{{ recovered_payments }}</strong>
+                </div>
+                <div class="report-mini">
+                    <span>Recovery Revenue</span>
+                    <strong>₹{{ recovery_revenue|floatformat:2|intcomma }}</strong>
+                </div>
+            </div>
+
+            <div class="report-card-grid small">
+                <div class="report-mini"><span>Paid</span><strong>{{ paid_count }}</strong></div>
+                <div class="report-mini"><span>Pending</span><strong>{{ pending_count }}</strong></div>
+                <div class="report-mini"><span>Failed</span><strong>{{ failed_count }}</strong></div>
+                <div class="report-mini"><span>Total Amount</span><strong>₹{{ total_amount|floatformat:2|intcomma }}</strong></div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Payment Transactions</h3>
+                <div class="report-export-actions">
+                    <button type="button" class="export-btn" data-export="csv">CSV</button>
+                    <button type="button" class="export-btn" data-export="excel">Excel</button>
+                    <button type="button" class="export-btn" data-export="copy">Copy</button>
+                    <button type="button" class="export-btn" data-export="print">Print</button>
+                </div>
+                <div class="category-table eport-export-table" style="--table-columns: 1.2fr 1.2fr .9fr .9fr 1.3fr 1.1fr .9fr;">
+                    <div class="table-head">
+                        <div>Order ID</div>
+                        <div>Customer</div>
+                        <div>Amount</div>
+                        <div>Status</div>
+                        <div>PayU Txn ID</div>
+                        <div>PayU Payment ID</div>
+                        <div>Date</div>
+                    </div>
+
+                    {% for order in payments %}
+                    <div class="table-row">
+                        <div>
+                            <a href="{% url 'AdminViewOrder' code=user.unique_code cid=order.unique_code %}">
+                                {{ order.order_id }}
+                            </a>
+                        </div>
+                        <div>{{ order.customer.name|default:"—" }}</div>
+                        <div>₹{{ order.total|floatformat:2|intcomma }}</div>
+                        <div><span class="status-badge {{ order.payment_status|lower }}">{{ order.payment_status }}</span></div>
+                        <div>{{ order.payu_txnid|default:"—" }}</div>
+                        <div>{{ order.payu_mihpayid|default:"—" }}</div>
+                        <div>{{ order.created_at|date:"d M Y" }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No payment records found.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

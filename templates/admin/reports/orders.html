@@ -1,0 +1,118 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Orders Report{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Orders Report</h2>
+                    <p class="text-muted">Track order status, payments and operational flow.</p>
+                </div>
+
+                <a href="{% url 'AdminReports' user.unique_code %}" class="btn-primary">Back to Reports</a>
+            </div>
+
+            <form method="GET" class="report-filter-card">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Order Status</label>
+                        <select name="status">
+                            <option value="">All</option>
+                            <option value="Pending" {% if status == "Pending" %}selected{% endif %}>Pending</option>
+                            <option value="Confirmed" {% if status == "Confirmed" %}selected{% endif %}>Confirmed</option>
+                            <option value="Processing" {% if status == "Processing" %}selected{% endif %}>Processing</option>
+                            <option value="Shipped" {% if status == "Shipped" %}selected{% endif %}>Shipped</option>
+                            <option value="Delivered" {% if status == "Delivered" %}selected{% endif %}>Delivered</option>
+                            <option value="Cancelled" {% if status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Payment Status</label>
+                        <select name="payment_status">
+                            <option value="">All</option>
+                            <option value="Pending" {% if payment_status == "Pending" %}selected{% endif %}>Pending</option>
+                            <option value="Paid" {% if payment_status == "Paid" %}selected{% endif %}>Paid</option>
+                            <option value="Failed" {% if payment_status == "Failed" %}selected{% endif %}>Failed</option>
+                            <option value="Refunded" {% if payment_status == "Refunded" %}selected{% endif %}>Refunded</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Apply</button>
+                </div>
+            </form>
+
+            <div class="report-card-grid small">
+                <div class="report-mini"><span>Total Orders</span><strong>{{ total_orders }}</strong></div>
+                <div class="report-mini"><span>Pending</span><strong>{{ pending_orders }}</strong></div>
+                <div class="report-mini"><span>Confirmed</span><strong>{{ confirmed_orders }}</strong></div>
+                <div class="report-mini"><span>Processing</span><strong>{{ processing_orders }}</strong></div>
+                <div class="report-mini"><span>Shipped</span><strong>{{ shipped_orders }}</strong></div>
+                <div class="report-mini"><span>Delivered</span><strong>{{ delivered_orders }}</strong></div>
+                <div class="report-mini"><span>Cancelled</span><strong>{{ cancelled_orders }}</strong></div>
+                <div class="report-mini"><span>Paid</span><strong>{{ paid_orders }}</strong></div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Order List</h3>
+                <div class="report-export-actions">
+                    <button type="button" class="export-btn" data-export="csv">CSV</button>
+                    <button type="button" class="export-btn" data-export="excel">Excel</button>
+                    <button type="button" class="export-btn" data-export="copy">Copy</button>
+                    <button type="button" class="export-btn" data-export="print">Print</button>
+                </div>
+                <div class="category-table eport-export-table" style="--table-columns: 1.2fr 1.3fr .8fr .9fr .9fr .9fr;">
+                    <div class="table-head">
+                        <div>Order ID</div>
+                        <div>Customer</div>
+                        <div>Total</div>
+                        <div>Payment</div>
+                        <div>Status</div>
+                        <div>Date</div>
+                    </div>
+                    {% for order in orders %}
+                    <div class="table-row">
+                        <div>
+                            <a href="{% url 'AdminViewOrder' code=user.unique_code cid=order.unique_code %}">
+                                {{ order.order_id }}
+                            </a>
+                        </div>
+                        <div>{{ order.customer.name|default:"—" }}</div>
+                        <div>₹{{ order.total|floatformat:2|intcomma }}</div>
+                        <div><span class="status-badge {{ order.payment_status|lower }}">{{ order.payment_status }}</span></div>
+                        <div><span class="status-badge {{ order.status|lower }}">{{ order.status }}</span></div>
+                        <div>{{ order.created_at|date:"d M Y" }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No orders found.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

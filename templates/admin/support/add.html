@@ -1,0 +1,60 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Create Support Ticket{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Create Support Ticket</h2>
+            <form class="category-form" method="POST" action="{% url 'AdminCreateSupportTicket' user.unique_code %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Customer</label>
+                    <select name="customer" id="customerSelect">
+                        <option value="" hidden>Select Customer</option>
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}">{{ customer.name }} ({{ customer.mobile }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Order</label>
+                    <select name="order" id="orderSelect">
+                        <option value="" hidden>None</option>
+                        {% for order in orders %}
+                        <option value="{{ order.id }}" data-customer="{{ order.customer_id }}">{{ order.order_id }}-{{ order.customer.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Subject</label>
+                    <input type="text" name="subject" required>
+                </div>
+                <div class="form-group full">
+                    <label>Message</label>
+                    <textarea rows="6" name="message" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Open" selected>Open</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-primary" type="submit">Create Ticket</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

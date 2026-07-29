@@ -1,0 +1,93 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Curated Brass Collection</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Curated Brass Collection</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="page-bundle-section">
+        <div class="bundle-grid">
+            {% for bundle in bundles %}
+            <div class="bundle-card">
+                <div class="bundle-carousel">
+                    <div class="bundle-track">
+                        {% for product in bundle.products.all %}
+                        {% with product.images.first as img %}
+                        {% if img and img.image %}
+                        <img src="{{ img.image.url }}" alt="{{ product.name }}">
+                        {% endif %}
+                        {% endwith %}
+                        {% endfor %}
+                    </div>
+                    <button class="bundle-prev"><i class="fa-solid fa-angle-left"></i></button>
+                    <button class="bundle-next"><i class="fa-solid fa-angle-right"></i></button>
+                    <div class="bundle-dots"></div>
+                </div>
+                <div class="bundle-content">
+                    <h3>{{ bundle.name }}</h3>
+                    <p>{{ bundle.short_description|default:"Curated premium combination" }}</p>
+                    <div class="bundle-meta">
+                        <span class="price">
+                            ₹{{ bundle.final_discounted_price|floatformat:2 }}
+                        </span>
+                        {% if bundle.final_price and bundle.final_price > bundle.final_discounted_price %}
+                        <span class="original-price">
+                            ₹{{ bundle.final_price|floatformat:2 }}
+                        </span>
+                        {% endif %}
+                        {% if bundle.savings > 0 %}
+                        <span class="save">Save ₹{{ bundle.savings|floatformat:2 }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="bundle-count">{{ bundle.products.count }} Items Included</p>
+                    <button type="button" class="add-bundle-to-cart-btn bundle-cta" data-slug="{{ bundle.slug }}">Buy This Bundle</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if faqs %}
+    <section class="vb-faq-section">
+        <div class="vb-faq-container">
+            <div class="section-header">
+                <span class="section-tag">Frequently Asked Questions</span>
+                <h2>Need Help?</h2>
+                <p>Find answers to the most common questions about our handcrafted brass collections, orders, shipping and care.</p>
+            </div>
+            <div class="vb-faq-list">
+                {% for faq in faqs %}
+                <article class="vb-faq-item {% if forloop.first %}active{% endif %}">
+                    <button class="vb-faq-question">
+                        <span class="vb-faq-number">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </span>
+                        <span class="vb-faq-title">
+                            {{ faq.question }}
+                        </span>
+                        <span class="vb-faq-icon">
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </button>
+                    <div class="vb-faq-answer">
+                        <div class="vb-faq-answer-inner">
+                            {{ faq.answer|safe }}
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}

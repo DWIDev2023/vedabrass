@@ -1,0 +1,103 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Product Performance Report{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Product Performance Report</h2>
+                    <p class="text-muted">Track top selling products, collections, units sold and revenue.</p>
+                </div>
+
+                <a href="{% url 'AdminReports' user.unique_code %}" class="btn-primary">Back to Reports</a>
+            </div>
+
+            <form method="GET" class="report-filter-card">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" value="{{ start_date }}">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" value="{{ end_date }}">
+                    </div>
+
+                    <button type="submit" class="btn-primary">Apply</button>
+                </div>
+            </form>
+
+            <div class="dashboard-card">
+                <h3>Top Collections</h3>
+                <div class="category-table" style="--table-columns: 1.5fr 1fr 1fr;">
+                    <div class="table-head">
+                        <div>Collection</div>
+                        <div>Units Sold</div>
+                        <div>Revenue</div>
+                    </div>
+
+                    {% for item in collections %}
+                    <div class="table-row">
+                        <div>{{ item.product__collection__name|default:"No Collection" }}</div>
+                        <div>{{ item.units_sold }}</div>
+                        <div>₹{{ item.revenue|floatformat:2|intcomma }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No collection sales found.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Top Selling Products</h3>
+                <div class="report-export-actions">
+                    <button type="button" class="export-btn" data-export="csv">CSV</button>
+                    <button type="button" class="export-btn" data-export="excel">Excel</button>
+                    <button type="button" class="export-btn" data-export="copy">Copy</button>
+                    <button type="button" class="export-btn" data-export="print">Print</button>
+                </div>
+                <div class="category-table eport-export-table" style="--table-columns: 2fr .8fr 1fr .8fr;">
+                    <div class="table-head">
+                        <div>Product</div>
+                        <div>Units Sold</div>
+                        <div>Revenue</div>
+                        <div>Orders</div>
+                    </div>
+
+                    {% for item in products %}
+                    <div class="table-row">
+                        <div>
+                            <strong>{{ item.product__name }}</strong><br>
+                            <small>{{ item.product__product_code }}</small>
+                        </div>
+
+                        <div>{{ item.units_sold }}</div>
+                        <div>₹{{ item.revenue|floatformat:2|intcomma }}</div>
+                        <div>{{ item.orders_count }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No products sold.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-content">
+            <h1>Vedabrass Journal</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <a href="{% url 'Blogs' %}">All Blogs</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Category: {{ category.name }}</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="blogs-page-section">
+        <div class="blogs-container">
+            {% if featured_blog %}
+            <a href="#" class="featured-blog-card">
+                {% if featured_blog.image %}
+                <img src="{{ featured_blog.image.url }}" alt="{{ featured_blog.title }}">
+                {% endif %}
+                <div class="featured-blog-content">
+                    <span>{{ featured_blog.category.name }}</span>
+                    <h2>{{ featured_blog.title }}</h2>
+                    <p>{{ featured_blog.short_description }}</p>
+                </div>
+            </a>
+            {% endif %}
+
+            <div class="blogs-layout">
+                <div class="blogs-grid">
+                    {% for blog in blogs %}
+                    <a href="{% url 'BlogDetails' blog.slug %}" class="blog-card">
+                        <div class="blog-card-image">
+                            {% if blog.image %}
+                            <img src="{{ blog.image.url }}" alt="{{ blog.title }}">
+                            {% endif %}
+                        </div>
+                        <div class="blog-card-content">
+                            <span>{{ blog.category.name }}</span>
+                            <h3>{{ blog.title }}</h3>
+                            <p>{{ blog.short_description|truncatewords:22 }}</p>
+                            <small>{{ blog.created_at|date:"d M Y" }}</small>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                <aside class="blog-sidebar">
+                    <div class="filter-box">
+                        <h3>Blog Categories</h3>
+
+                        {% for cat in categories %}
+                        <a href="{% url 'CategoryBlogs' cat.slug %}" class="filter-link">
+                            {{ cat.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+{% endblock %}

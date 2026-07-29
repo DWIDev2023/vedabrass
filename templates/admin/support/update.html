@@ -1,0 +1,64 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Update Support Ticket{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Update Support Ticket</h2>
+            <form class="category-form" method="POST" action="{% url 'AdminUpdateSupportTicket' ticket.unique_code %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Customer</label>
+                    <select name="customer" id="customerSelect">
+                        <option value="" hidden>Select Customer</option>
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}" {% if ticket.customer_id == customer.id %}selected{% endif %}>{{ customer.name }} ({{ customer.mobile }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Order</label>
+                    <select name="order" id="orderSelect">
+                        <option value="" hidden>None</option>
+                        {% for order in orders %}
+                        <option value="{{ order.id }}" data-customer="{{ order.customer_id }}" {% if ticket.order_id == order.id %}selected{% endif %}>{{ order.order_id }}-{{ order.customer.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Subject</label>
+                    <input type="text" name="subject" value="{{ ticket.subject }}" required>
+                </div>
+                <div class="form-group full">
+                    <label>Message</label>
+                    <textarea rows="6" name="message" required>{{ ticket.message }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Open" {% if ticket.status == "Open" %}selected{% endif %}>Open</option>
+                        <option value="In Progress" {% if ticket.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                        <option value="Closed" {% if ticket.status == "Closed" %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Chat Session</label>
+                    <input type="text" value="{% if ticket.session %}{{ ticket.session.session_key }}{% else %}Manual Ticket{% endif %}" readonly>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

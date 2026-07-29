@@ -1,0 +1,68 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Update Chat Keyword{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Update Chat Keyword</h2>
+            <form class="category-form" method="POST" action="{% url 'AdminUpdateChatKeywords' keyword.unique_code %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Keyword</label>
+                    <input type="text" name="keyword" value="{{ keyword.keyword }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <input type="number" name="priority" value="{{ keyword.priority }}" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category">
+                        <option value="" hidden>Select Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if keyword.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Collection</label>
+                    <select name="collection">
+                        <option value="" hidden>Select Collection</option>
+                        {% for collection in collections %}
+                        <option value="{{ collection.id }}" {% if keyword.collection_id == collection.id %}selected{% endif %}>{{ collection.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tag</label>
+                    <select name="tag">
+                        <option value="" hidden>Select Tag</option>
+                        {% for tag in tags %}
+                        <option value="{{ tag.id }}" {% if keyword.tag_id == tag.id %}selected{% endif %}>{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="is_active">
+                        <option value="True" {% if keyword.is_active %}selected{% endif %}>Active</option>
+                        <option value="False" {% if not keyword.is_active %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

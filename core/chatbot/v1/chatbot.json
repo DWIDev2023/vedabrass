@@ -1,0 +1,200 @@
+{
+  "meta": {
+    "name": "VedaBrass Ecommerce Chatbot",
+    "version": "1.0.0",
+    "last_updated": "2026-06-20"
+  },
+  "bot": {
+    "name": "VedaBrass Assistant",
+    "welcome": "Namaste, Welcome to VedaBrass. I can help you find products, track orders, download invoices, understand shipping, and connect with support.",
+    "fallback": "I could not understand that clearly. Please choose an option below.",
+    "max_retries_before_support": 3
+  },
+  "global_quick_replies": [
+    { "label": "Main Menu", "message": "Main Menu" },
+    { "label": "Talk to Support", "message": "Talk to Support" }
+  ],
+  "intents": [
+    {
+      "id": "main_menu",
+      "keywords": ["main menu", "menu", "start again", "go back", "back"],
+      "next_state": "greeting"
+    },
+    {
+      "id": "browse_products",
+      "keywords": ["browse products", "show products", "shop", "buy product", "catalog"],
+      "next_state": "browse_category_select"
+    },
+    {
+      "id": "recommend_products",
+      "keywords": ["recommend products", "suggest product", "help me choose", "gift suggestion"],
+      "next_state": "recommendation_usecase"
+    },
+    {
+      "id": "track_order",
+      "keywords": ["track order", "order status", "where is my order", "shipment status"],
+      "next_state": "track_order_init"
+    },
+    {
+      "id": "invoice",
+      "keywords": ["invoice", "download invoice", "bill", "receipt"],
+      "next_state": "invoice_init"
+    },
+    {
+      "id": "shipping_help",
+      "keywords": ["shipping", "delivery", "dispatch", "courier"],
+      "next_state": "shipping_help"
+    },
+    {
+      "id": "support",
+      "keywords": ["support", "contact", "talk to human", "customer care"],
+      "next_state": "human_handoff"
+    }
+  ],
+  "states": {
+    "greeting": {
+      "type": "message",
+      "message": "How can I help you today?",
+      "quick_replies": [
+        { "label": "Browse Products", "message": "Browse Products" },
+        { "label": "Help Me Choose", "message": "Recommend Products" },
+        { "label": "Track Order", "message": "Track Order" },
+        { "label": "Download Invoice", "message": "Download Invoice" },
+        { "label": "Shipping Help", "message": "Shipping Help" },
+        { "label": "Talk to Support", "message": "Talk to Support" }
+      ]
+    },
+    "browse_category_select": {
+      "type": "question",
+      "message": "Which category are you interested in?",
+      "store_entity": "category",
+      "next_state": "browse_budget_select",
+      "quick_replies": [
+        { "label": "Brass Idols", "message": "Brass Idols" },
+        { "label": "Home Decor", "message": "Home Decor" },
+        { "label": "Pooja Essentials", "message": "Pooja Essentials" },
+        { "label": "Gifting", "message": "Gifting" },
+        { "label": "Kitchen Essentials", "message": "Kitchen Essentials" }
+      ]
+    },
+    "browse_budget_select": {
+      "type": "question",
+      "message": "What is your preferred budget?",
+      "store_entity": "budget",
+      "next_state": "product_results",
+      "quick_replies": [
+        { "label": "Under ₹1000", "message": "Under 1000" },
+        { "label": "₹1000 - ₹3000", "message": "1000 to 3000" },
+        { "label": "₹3000 - ₹7000", "message": "3000 to 7000" },
+        { "label": "₹7000 - ₹10000", "message": "7000 to 10000" },
+        { "label": "₹10000 - ₹15000", "message": "10000 to 15000" },
+        { "label": "₹15000 - ₹20000", "message": "15000 to 20000" },
+        { "label": "₹20000 - ₹25000", "message": "20000 to 25000" },
+        { "label": "Above ₹7000", "message": "Above 25000" }
+      ]
+    },
+    "recommendation_usecase": {
+      "type": "question",
+      "message": "What are you shopping for?",
+      "store_entity": "use_case",
+      "next_state": "recommendation_budget",
+      "quick_replies": [
+        { "label": "Daily Worship", "message": "Daily Worship" },
+        { "label": "Home Decor", "message": "Home Decor" },
+        { "label": "Gifting", "message": "Gifting" },
+        { "label": "Festival / Wedding", "message": "Festival Wedding" }
+      ]
+    },
+    "recommendation_budget": {
+      "type": "question",
+      "message": "What is your approximate budget?",
+      "store_entity": "budget",
+      "next_state": "recommendation_results",
+      "quick_replies": [
+        { "label": "Under ₹1000", "message": "Under 1000" },
+        { "label": "₹1000 - ₹3000", "message": "1000 to 3000" },
+        { "label": "₹3000 - ₹7000", "message": "3000 to 7000" },
+        { "label": "₹7000 - ₹10000", "message": "7000 to 10000" },
+        { "label": "₹10000 - ₹15000", "message": "10000 to 15000" },
+        { "label": "₹15000 - ₹20000", "message": "15000 to 20000" },
+        { "label": "₹20000 - ₹25000", "message": "20000 to 25000" },
+        { "label": "Above ₹25000", "message": "Above 25000" }
+      ]
+    },
+    "product_results": {
+      "type": "action",
+      "action": "RECOMMEND_PRODUCTS",
+      "message": "Here are a few products you may like.",
+      "quick_replies": [
+        { "label": "Show More", "message": "Show More Products" },
+        { "label": "Main Menu", "message": "Main Menu" }
+      ]
+    },
+    "recommendation_results": {
+      "type": "action",
+      "action": "RECOMMEND_PRODUCTS",
+      "message": "Based on your preference, here are recommended VedaBrass products.",
+      "quick_replies": [
+        { "label": "Show More", "message": "Show More Products" },
+        { "label": "Main Menu", "message": "Main Menu" }
+      ]
+    },
+    "track_order_init": {
+      "type": "input_capture",
+      "message": "Please enter your Order ID.",
+      "store_entity": "order_id",
+      "next_state": "track_order_result"
+    },
+    "track_order_result": {
+      "type": "action",
+      "action": "TRACK_ORDER",
+      "not_found_message": "I could not find this Order ID. Please check and try again.",
+      "quick_replies": [
+        { "label": "Try Again", "message": "Track Order" },
+        { "label": "Talk to Support", "message": "Talk to Support" }
+      ]
+    },
+    "invoice_init": {
+      "type": "input_capture",
+      "message": "Please enter your Order ID to download your invoice.",
+      "store_entity": "invoice_order_id",
+      "next_state": "invoice_result"
+    },
+    "invoice_result": {
+      "type": "action",
+      "action": "GET_INVOICE",
+      "not_found_message": "Invoice is available only for paid orders. Please check your Order ID.",
+      "quick_replies": [
+        { "label": "Try Again", "message": "Download Invoice" },
+        { "label": "Talk to Support", "message": "Talk to Support" }
+      ]
+    },
+    "shipping_help": {
+      "type": "message",
+      "message": "VedaBrass orders are processed after successful payment. Once shipped, tracking details are shared by email, SMS or WhatsApp.",
+      "links": [
+        { "label": "Track Order", "url": "/track-order" },
+        { "label": "Contact Support", "url": "/contact-us" }
+      ],
+      "quick_replies": [
+        { "label": "Track Order", "message": "Track Order" },
+        { "label": "Main Menu", "message": "Main Menu" }
+      ]
+    },
+    "human_handoff": {
+      "type": "escalation",
+      "message": "You can connect with VedaBrass support using the options below.",
+      "links": [
+        { "label": "WhatsApp Support", "url": "https://wa.me/918712495444" },
+        { "label": "Contact Page", "url": "/contact-us" }
+      ],
+      "quick_replies": [
+        { "label": "Main Menu", "message": "Main Menu" }
+      ]
+    },
+    "goodbye": {
+      "type": "message",
+      "message": "Thank you for visiting VedaBrass. Have a wonderful day."
+    }
+  }
+}

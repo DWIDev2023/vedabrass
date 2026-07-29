@@ -1,0 +1,161 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Edit Order Details{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if is_awb_assigned %}
+    <div class="alert warning">
+        AWB has already been assigned. Customer and address details are locked.
+    </div>
+    {% elif is_shipment_created %}
+    <div class="alert warning">
+        Shiprocket shipment has already been created. Customer and address details are locked to avoid mismatch.
+    </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Edit Order</h2>
+                    <p class="text-muted">Order ID: {{ order.order_id }}</p>
+                </div>
+                <a href="{% url 'AdminOrders' user.unique_code %}" class="btn-primary">Back to Order</a>
+            </div>
+
+            <form method="POST" action="{% url 'AdminEditOrder' order.unique_code %}" class="category-form">
+                {% csrf_token %}
+                <div class="dashboard-card">
+                    <h3>Order Status</h3>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="status">
+                            <option value="Pending" {% if order.status == "Pending" %}selected{% endif %}>Pending</option>
+                            <option value="Confirmed" {% if order.status == "Confirmed" %}selected{% endif %}>Confirmed</option>
+                            <option value="Processing" {% if order.status == "Processing" %}selected{% endif %}>Processing</option>
+                            <option value="Shipped" {% if order.status == "Shipped" %}selected{% endif %}>Shipped</option>
+                            <option value="Delivered" {% if order.status == "Delivered" %}selected{% endif %}>Delivered</option>
+                            <option value="Cancelled" {% if order.status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Shipping Charge</label>
+                        <input type="text" name="shipping" value="{{ order.shipping }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Subtotal</label>
+                        <input type="text" value="{{ order.subtotal }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="text" value="{{ order.total }}" readonly>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Customer Details</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="name" value="{{ order.customer.name }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" value="{{ order.customer.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile</label>
+                            <input type="text" name="mobile" value="{{ order.customer.mobile }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Company</label>
+                            <input type="text" name="company_name" value="{{ order.customer.company_name|default:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>GST Number</label>
+                            <input type="text" name="gst_number" value="{{ order.customer.gst_number|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-view-grid">
+                    <div class="dashboard-card">
+                        <h3>Billing Address</h3>
+                        <div class="form-group">
+                            <label>Address Line 1</label>
+                            <input type="text" name="billing_address_line_1" value="{{ order.billing_address.address_line_1 }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Address Line 2</label>
+                            <input type="text" name="billing_address_line_2" value="{{ order.billing_address.address_line_2|default:'' }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Landmark</label>
+                            <input type="text" name="billing_landmark" value="{{ order.billing_address.landmark|default:'' }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" name="billing_city" value="{{ order.billing_address.city }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" name="billing_state" value="{{ order.billing_address.state }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" name="billing_country" value="{{ order.billing_address.country }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Postal Code</label>
+                            <input type="text" name="billing_postal_code" value="{{ order.billing_address.postal_code }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>Shipping Address</h3>
+                        <div class="form-group">
+                            <label>Address Line 1</label>
+                            <input type="text" name="shipping_address_line_1" value="{{ order.shipping_address.address_line_1 }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Address Line 2</label>
+                            <input type="text" name="shipping_address_line_2" value="{{ order.shipping_address.address_line_2|default:'' }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Landmark</label>
+                            <input type="text" name="shipping_landmark" value="{{ order.shipping_address.landmark|default:'' }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" name="shipping_city" value="{{ order.shipping_address.city }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" name="shipping_state" value="{{ order.shipping_address.state }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" name="shipping_country" value="{{ order.shipping_address.country }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Postal Code</label>
+                            <input type="text" name="shipping_postal_code" value="{{ order.shipping_address.postal_code }}" {% if is_shipment_created or is_awb_assigned %}readonly{% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <a href="{% url 'AdminOrders' user.unique_code %}" class="btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

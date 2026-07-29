@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice - {{ order.invoice_number }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f8f4ee;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f4ee;padding:30px 0;">
+    <tr>
+        <td align="center">
+        <table width="700" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;">
+
+            <tr>
+                <td style="background:#442d1c;padding:35px;color:#ffffff;">
+                    <h1 style="margin:0;font-size:30px;">Vedabrass</h1>
+                    <p style="margin:10px 0 0;color:#f4e8d5;">
+                        Invoice for your order
+                    </p>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="padding:35px;">
+
+                    <p style="margin:0 0 20px;font-size:16px;">
+                        Hello {{ customer.name }},
+                    </p>
+
+                    <p style="margin:0 0 25px;color:#555;line-height:1.8;">
+                        Thank you for shopping with Vedabrass.
+                        Your invoice is now available and can be viewed or downloaded anytime using the button below.
+                    </p>
+
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:25px;">
+                        <tr>
+                            <td width="50%" style="padding:12px;background:#fdfaf6;">
+                                <strong>Invoice Number</strong><br>
+                                {{ order.invoice_number }}
+                            </td>
+
+                            <td width="50%" style="padding:12px;background:#fdfaf6;">
+                                <strong>Order ID</strong><br>
+                                {{ order.order_id }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="padding:12px;background:#fdfaf6;">
+                                <strong>Order Date</strong><br>
+                                {{ order.created_at|date:"d M Y" }}
+                            </td>
+
+                            <td style="padding:12px;background:#fdfaf6;">
+                                <strong>Total Amount</strong><br>
+                                ₹{{ order.total|floatformat:2 }}
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin:30px 0;">
+                        <tr>
+                            <td align="center">
+
+                                <a href="{{ invoice_url }}"
+                                   style="
+                                        display:inline-block;
+                                        background:#442d1c;
+                                        color:#ffffff;
+                                        text-decoration:none;
+                                        padding:14px 30px;
+                                        border-radius:999px;
+                                        font-weight:bold;
+                                   ">
+                                    View & Download Invoice
+                                </a>
+
+                            </td>
+                        </tr>
+                    </table>
+
+                    <h3 style="color:#442d1c;margin-bottom:15px;">
+                        Order Summary
+                    </h3>
+
+                    <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse:collapse;border:1px solid #e5e5e5;">
+
+                        <tr style="background:#442d1c;color:#ffffff;">
+                            <th align="left">Product</th>
+                            <th align="center">Qty</th>
+                            <th align="right">Amount</th>
+                        </tr>
+
+                        {% for item in order_items %}
+                        <tr>
+                            <td style="border-bottom:1px solid #eeeeee;">
+                                {{ item.product.name }}
+                            </td>
+
+                            <td align="center" style="border-bottom:1px solid #eeeeee;">
+                                {{ item.quantity }}
+                            </td>
+
+                            <td align="right" style="border-bottom:1px solid #eeeeee;">
+                                ₹{{ item.total|floatformat:2 }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </table>
+
+                    <table width="100%" cellpadding="10" cellspacing="0" style="margin-top:25px;">
+                        <tr>
+                            <td align="right">
+                                <strong>Subtotal:</strong>
+                            </td>
+                            <td width="150" align="right">
+                                ₹{{ order.subtotal|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td align="right">
+                                <strong>Shipping:</strong>
+                            </td>
+                            <td align="right">
+                                ₹{{ order.shipping|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td align="right" style="font-size:18px;">
+                                <strong>Total:</strong>
+                            </td>
+                            <td align="right" style="font-size:18px;color:#442d1c;">
+                                <strong>₹{{ order.total|floatformat:2 }}</strong>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p style="margin-top:35px;color:#777;line-height:1.7;">
+                        If you have any questions regarding your order,
+                        please reply to this email or contact our support team.
+                    </p>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td style="background:#f8f4ee;padding:25px;text-align:center;color:#777;font-size:13px;">
+                    © {% now "Y" %} Vedabrass. All Rights Reserved.
+                </td>
+            </tr>
+
+        </table>
+
+    </td>
+</tr>
+
+</table>
+
+</body>
+</html>

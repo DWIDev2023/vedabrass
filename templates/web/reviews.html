@@ -1,0 +1,99 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Reviews</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Reviews</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="vr-trust-strip">
+        <div class="vr-container">
+            <div class="vr-stat-card">
+                <div class="vr-stat-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div class="vr-stat-content">
+                    <h3>{{ average_rating|default:"4.9" }}</h3>
+                    <p>Average Rating</p>
+                </div>
+            </div>
+            <div class="vr-stat-card">
+                <div class="vr-stat-icon">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <div class="vr-stat-content">
+                    <h3>{{ total_reviews }}+</h3>
+                    <p>Verified Reviews</p>
+                </div>
+            </div>
+            <div class="vr-stat-card">
+                <div class="vr-stat-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div class="vr-stat-content">
+                    <h3>{{ reviewed_products }}+</h3>
+                    <p>Products Reviewed</p>
+                </div>
+            </div>
+            <div class="vr-stat-card">
+                <div class="vr-stat-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="vr-stat-content">
+                    <h3>98%</h3>
+                    <p>Recommend VedaBrass</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vr-featured-section">
+        <div class="vr-container">
+            <div class="vr-section-heading">
+                <h2>Stories Shared By Our Customers</h2>
+                <p>From home décor and gifting to temples and celebrations, discover how VedaBrass has become part of meaningful moments.</p>
+            </div>
+            <div class="vr-featured-grid">
+                {% for review in featured_reviews %}
+                <article class="vr-review-card {% if review.image %}has-image{% endif %}">
+                    {% if review.image %}
+                    <div class="vr-review-image">
+                        <imgsrc="{{ review.image.url }}" alt="{{ review.title }}">
+                    </div>
+                    {% endif %}
+                    <div class="vr-review-content">
+                        <div class="vr-stars">
+                            {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                <i class="fa-solid fa-star"></i>
+                            {% else %}
+                                <i class="fa-regular fa-star"></i>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <h3>{{ review.title }}</h3>
+                        <p>{{ review.comment|truncatechars:220 }}</p>
+                        <div class="vr-review-footer">
+                            <div>
+                                <strong>{{ review.customer.first_name }}</strong>
+                                <span>Verified Customer</span>
+                            </div>
+                            {% if review.product %}
+                            <a href="#">{{ review.product.name }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

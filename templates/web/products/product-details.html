@@ -1,0 +1,302 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Product Details</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                {% if category %}<a href="#">{{ category.name }}</a><span><span><i class="fa-solid fa-long-arrow-right"></i></span></span>{% endif %}
+                {% if subcategory %}<a href="#">{{ subcategory.name }}</a><span><i class="fa-solid fa-long-arrow-right"></i></span>{% endif %}
+                <strong>{{ product.name }}</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="product-detail-section">
+        <div class="product-detail-container">
+            <div class="product-gallery">
+                {% with product.images.all|first as main_img %}
+                    {% if main_img and main_img.image %}
+                    <img class="main-product-img" src="{{ main_img.image.url }}" alt="{{ main_img.image.alt_text|default:product.name }}">
+                    {% endif %}
+                {% endwith %}
+                <div class="thumb-gallery">
+                    {% for img in product.images.all %}
+                    <img class="{% if forloop.first %}active{% endif %}" src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}">
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="product-detail-info">
+                <h1>{{ product.name }}</h1>
+                {% if product.product_code %}
+                <p class="product-code">Code: {{ product.product_code }}</p>
+                {% endif %}
+
+                <div class="detail-price">
+                    {% if product.discount_price and product.discount_price < product.price %}
+                    <span class="old">₹{{ product.price|intcomma }}</span>
+                    <span class="new">₹{{ product.discount_price|intcomma }}</span>
+                    <span class="discount">-{{ product.discount_percentage }}%</span>
+                    {% else %}
+                    <span class="new">₹{{ product.price|intcomma }}</span>
+                    {% endif %}
+                </div>
+
+                {% if product.inventory %}
+                <p class="stock {% if product.inventory.quantity > 0 %}in-stock{% else %}out-stock{% endif %}">
+                    {% if product.inventory.quantity > 0 %}
+                        In Stock
+                    {% else %}
+                        Out of Stock
+                    {% endif %}
+                </p>
+                {% endif %}
+
+                <div class="product-actions-detail">
+                    <button class="cart-btn add-to-cart-btn" data-slug="{{ product.unique_code }}">Add to Cart</button>
+                </div>
+
+                <div class="product-meta">
+                    {% if product.brand %}
+                    <p><strong>Brand:</strong> {{ product.brand }}</p>
+                    {% endif %}
+                    {% if product.weight %}
+                    <p><strong>Weight:</strong> {{ product.weight }} kg</p>
+                    {% endif %}
+                    {% if product.height and product.width %}
+                    <p><strong>Size:</strong> {{ product.height }} x {{ product.width }} inch</p>
+                    {% endif %}
+                </div>
+
+                <div class="product-attributes">
+                    {% for attr in product.attributes.all %}
+                    <p><strong>{{ attr.name }}:</strong> {{ attr.value }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="product-description-section">
+        <div class="product-description-container">
+            <h2>Description</h2>
+            <p>{{ product.description }}</p>
+        </div>
+    </section>
+    
+    {% if bundle %}
+    <section class="bundle-section-full">
+        <div class="bundle-wrapper">
+            <div class="section-header">
+                <h2>Frequently Bought Together</h2>
+            </div>
+            <div class="bundle-grid">
+                <div class="bundle-card">
+                    <div class="bundle-products-row">
+                        {% for product in bundle_products %}
+                        <div class="bundle-product-card">
+                            <div class="bundle-media">
+                                {% with img=product.ordered_images|first %}
+                                    {% if img and img.image %}
+                                    <img src="{{ img.image.url }}" alt="{{ product.name }}">
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="bundle-info">
+                                <h3>{{ product.name }}</h3>
+                                <div class="bundle-price">
+                                    {% if product.discount_price and product.discount_price < product.price %}
+                                    <span class="old">₹{{ product.price|intcomma }}</span>
+                                    <span class="new">₹{{ product.discount_price|intcomma }}</span>
+                                    {% else %}
+                                    <span class="new">₹{{ product.price|intcomma }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% if not forloop.last %}
+                        <div class="bundle-plus">+</div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="bundle-footer">
+                        <div class="bundle-meta">
+                            <h3>{{ bundle.name }}</h3>
+                            <div class="bundle-price-total">
+                                {% if bundle.discounted_bundle_price %}
+                                    <span class="old">₹{{ bundle.bundle_price }}</span>
+                                    <span class="new">₹{{ bundle.discounted_bundle_price }}</span>
+                                {% else %}
+                                    <span class="new">₹{{ bundle.bundle_price }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <button type="button" class="add-bundle-to-cart-btn bundle-add-btn bundle-cta" data-slug="{{ bundle.slug }}">Buy This Bundle</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if faqs %}
+    <section class="vb-faq-section">
+        <div class="vb-faq-container">
+            <div class="section-header">
+                <span class="section-tag">Frequently Asked Questions</span>
+                <h2>Need Help?</h2>
+                <p>Find answers to the most common questions about our handcrafted brass collections, orders, shipping and care.</p>
+            </div>
+            <div class="vb-faq-list">
+                {% for faq in faqs %}
+                <article class="vb-faq-item {% if forloop.first %}active{% endif %}">
+                    <button class="vb-faq-question">
+                        <span class="vb-faq-number">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </span>
+                        <span class="vb-faq-title">
+                            {{ faq.question }}
+                        </span>
+                        <span class="vb-faq-icon">
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </button>
+                    <div class="vb-faq-answer">
+                        <div class="vb-faq-answer-inner">
+                            {{ faq.answer|safe }}
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="product-reviews-section">
+        <div class="product-description-container">
+            <h2>Customer Reviews</h2>
+            <div class="review-grid">
+                {% for review in product.reviews.all %}
+                <div class="review-card">
+                    <div class="review-top">
+                        <div>
+                            <h4>{{ review.title }}</h4>
+                            <span>{{ review.customer.name }}</span>
+                        </div>
+                        <div class="review-rating">{{ review.rating }}/5</div>
+                    </div>
+                    <p>{{ review.comment }}</p>
+                </div>
+                {% empty %}
+                <p class="empty-review">No reviews yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="review-form-section">
+        <div class="product-description-container">
+            <h2>Write a Review</h2>
+            <form method="POST" action="{% url 'SubmitReview' %}" class="review-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="review-grid-form">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="hidden" name="product" value="{{ product.unique_code }}">
+                        <input type="text" name="name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Email</label>
+                        <input type="email" name="email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Mobile Number</label>
+                        <input type="tel" name="mobile" minlength="10" maxlength="10" placeholder="Enter your mobile number">
+                    </div>
+                    <div class="form-group">
+                        <label>Review Title</label>
+                        <input type="text" name="title" placeholder="Enter review title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select name="rating" required>
+                            <option value="" hidden>Select Rating</option>
+                            <option value="5">5 Star</option>
+                            <option value="4">4 Star</option>
+                            <option value="3">3 Star</option>
+                            <option value="2">2 Star</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Product Image</label>
+                        <input type="file" name="image" accept="image/*">
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label>Your Review</label>
+                    <textarea rows="6" name="comment" placeholder="Write your review..." required></textarea>
+                </div>
+                <button type="submit" class="submit-review-btn">Submit Review</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="related-products-section">
+        <div class="related-products-container">
+            <div class="related-section-header">
+                <div>
+                    <span class="section-tag">You May Also Like</span>
+                    <h2>{{ related_title }}</h2>
+                </div>
+
+                {% if related_url %}
+                <a href="{{ related_url }}" class="view-all-link">
+                    {{ related_url_text }}
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="vb-product-grid">
+                {% for related in related_products %}
+                <a href="{% url 'ProductDetails' related.slug %}" class="vb-product-card">
+                    {% if related.discount_price and related.discount_price < related.price %}
+                    <span class="vb-discount">SAVE {{ related.discount_percentage }}%</span>
+                    {% endif %}
+                    <div class="vb-image-area">
+                        <div class="vb-image-glow"></div>
+                        {% if related.ordered_images %}
+                        <img src="{{ related.ordered_images.0.image.url }}" alt="{{ related.ordered_images.0.alt_text|default:related.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="vb-product-content">
+                        <span class="vb-category">{{ related.collection.name }}</span>
+                        <h3>{{ related.name }}</h3>
+                        <div class="vb-price">
+                            {% if related.discount_price and related.discount_price < related.price %}
+                            <span class="current">₹{{ related.discount_price|intcomma }}</span>
+                            <span class="old">₹{{ related.price|intcomma }}</span>
+                            {% else %}
+                            <span class="current">₹{{ related.price|intcomma }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="vb-product-actions">
+                            <button class="vb-cart-btn add-to-cart-btn" data-slug="{{ related.unique_code }}">Add to Cart</button>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <p>No products found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

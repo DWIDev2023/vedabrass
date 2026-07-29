@@ -1,0 +1,114 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Notification Report{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Notification Report</h2>
+                    <p class="text-muted">Email, WhatsApp and SMS delivery performance.</p>
+                </div>
+                <a href="{% url 'AdminReports' user.unique_code %}" class="btn-primary">Back to Reports</a>
+            </div>
+
+            <form method="GET" class="report-filter-card">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>Channel</label>
+                        <select name="channel">
+                            <option value="">All</option>
+                            <option value="Email" {% if channel == "Email" %}selected{% endif %}>Email</option>
+                            <option value="WhatsApp" {% if channel == "WhatsApp" %}selected{% endif %}>WhatsApp</option>
+                            <option value="SMS" {% if channel == "SMS" %}selected{% endif %}>SMS</option>
+                            <option value="Offline" {% if channel == "Offline" %}selected{% endif %}>Offline</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select name="status">
+                            <option value="">All</option>
+                            <option value="Success" {% if status == "Success" %}selected{% endif %}>Success</option>
+                            <option value="Failed" {% if status == "Failed" %}selected{% endif %}>Failed</option>
+                            <option value="Pending" {% if status == "Pending" %}selected{% endif %}>Pending</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Event</label>
+                        <select name="event">
+                            <option value="">All</option>
+                            <option value="order_paid" {% if event == "order_paid" %}selected{% endif %}>Order Paid</option>
+                            <option value="tracking_available" {% if event == "tracking_available" %}selected{% endif %}>Tracking Available</option>
+                            <option value="order_cancelled" {% if event == "order_cancelled" %}selected{% endif %}>Order Cancelled</option>
+                            <option value="payment_abandoned" {% if event == "payment_abandoned" %}selected{% endif %}>Payment Abandoned</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Apply</button>
+                </div>
+            </form>
+
+            <div class="report-card-grid small">
+                <div class="report-mini"><span>Total Logs</span><strong>{{ total_logs }}</strong></div>
+                <div class="report-mini"><span>Success</span><strong>{{ success_logs }}</strong></div>
+                <div class="report-mini"><span>Failed</span><strong>{{ failed_logs }}</strong></div>
+                <div class="report-mini"><span>Email</span><strong>{{ email_logs }}</strong></div>
+                <div class="report-mini"><span>WhatsApp</span><strong>{{ whatsapp_logs }}</strong></div>
+                <div class="report-mini"><span>SMS</span><strong>{{ sms_logs }}</strong></div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Notification Logs</h3>
+                <div class="report-export-actions">
+                    <button type="button" class="export-btn" data-export="csv">CSV</button>
+                    <button type="button" class="export-btn" data-export="excel">Excel</button>
+                    <button type="button" class="export-btn" data-export="copy">Copy</button>
+                    <button type="button" class="export-btn" data-export="print">Print</button>
+                </div>
+                <div class="category-table eport-export-table" style="--table-columns: 1fr 1fr 1fr .8fr .8fr 1fr 1.2fr;">
+                    <div class="table-head">
+                        <div>Date</div>
+                        <div>Order</div>
+                        <div>Customer</div>
+                        <div>Channel</div>
+                        <div>Status</div>
+                        <div>Event</div>
+                        <div>Recipient</div>
+                    </div>
+
+                    {% for log in logs %}
+                    <div class="table-row">
+                        <div>{{ log.created_at|date:"d M Y" }}</div>
+                        <div>
+                            <a href="{% url 'AdminViewOrder' log.order.unique_code %}">
+                                {{ log.order.order_id }}
+                            </a>
+                        </div>
+                        <div>{{ log.order.customer.name|default:"—" }}</div>
+                        <div>{{ log.channel }}</div>
+                        <div><span class="status-badge {{ log.status|lower }}">{{ log.status }}</span></div>
+                        <div>{{ log.event }}</div>
+                        <div>{{ log.recipient|default:"—" }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No notification logs found.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

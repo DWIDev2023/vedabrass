@@ -1,0 +1,16 @@
+{% extends "layouts/berror.html" %}
+{% load static %}
+{% block content %}
+    <section class="web-error-section">
+        <div class="web-error-card">
+            <span class="web-error-code">403</span>
+            <h1>Access Denied</h1>
+            <p>You do not have permission to access this page or resource. If you believe this is a mistake, please contact support.</p>
+
+            <div class="web-error-actions">
+                <a href="{% url 'Welcome' %}" class="web-error-btn primary">Go Home</a>
+                <a href="{% url 'Products' %}" class="web-error-btn secondary">Shop Products</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

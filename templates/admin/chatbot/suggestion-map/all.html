@@ -1,0 +1,72 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Suggestion Maps{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">Suggestion Maps</h2>
+                <a href="{% url 'AdminAddSuggestMap' user.unique_code %}" class="btn-primary">+ Add Suggestion Map</a>
+            </div>
+            <input type="text" id="bundleSearch" placeholder="Search suggestion map..." class="search-input">
+            <div class="category-table product-table">
+                <div class="table-head product-head">
+                    <div>Name</div>
+                    <div>Products</div>
+                    <div>Bundle Price</div>
+                    <div>Discount Price</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                {% for bundle in bundles %}
+                <div class="table-row bundle-row">
+                    <div>{{ bundle.name }}</div>
+                    <div>{{ bundle.products.count }}</div>
+                    <div>₹{{ bundle.bundle_price }}</div>
+                    <div>₹{{ bundle.discounted_bundle_price }}</div>
+                    <div>
+                        {% if bundle.is_active %}
+                        <span class="status active">Active</span>
+                        {% else %}
+                        <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        <a href="{% url 'AdminUpdateSuggestMap' bundle.unique_code %}" class="btn-edit"> <i class="fa-solid fa-edit"></i></a>
+                        <a href="javascript:void(0)" class="btn-delete" data-id="{{ bundle.unique_code }}" data-name="{{ bundle.name }}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row bundle-row">
+                    <div style="grid-column:span 6;text-align:center;">No Suggestion Maps Found.</div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Suggestion Map</h3>
+                        <p id="deleteText">Are you sure you want to delete selected suggestion map?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteSuggestMap' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="map_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

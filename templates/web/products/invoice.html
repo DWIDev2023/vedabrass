@@ -1,0 +1,106 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="vb-invoice-page">
+        <div class="vb-invoice-wrap">
+            <div class="vb-invoice-actions">
+                <a href="{% url 'TrackOrder' order.unique_code %}" class="vb-invoice-back"><i class="fa-solid fa-long-arrow-left"></i> Back to Tracking</a>
+                <button type="button" onclick="window.print()" class="vb-invoice-print">Print / Download PDF</button>
+            </div>
+
+            <div class="vb-invoice-box">
+                <div class="vb-invoice-header">
+                    <div>
+                        <h1>Vedabrass</h1>
+                        <p>Handcrafted Brass Idols, Decor &amp; Wellness Essentials</p>
+                    </div>
+                    <div>
+                        <h2>Invoice</h2>
+                        <p><strong>{{ order.invoice_number }}</strong></p>
+                    </div>
+                </div>
+                <div class="vb-invoice-meta">
+                    <div>
+                        <span>Order ID</span>
+                        <strong>{{ order.order_id }}</strong>
+                    </div>
+                    <div>
+                        <span>Invoice Date</span>
+                        <strong>{{ order.created_at|date:"d M Y" }}</strong>
+                    </div>
+                    <div>
+                        <span>Payment Status</span>
+                        <strong>{{ order.payment_status }}</strong>
+                    </div>
+                    <div>
+                        <span>Payment Mode</span>
+                        <strong>{{ order.payment_mode|default:"PayU" }}</strong>
+                    </div>
+                </div>
+
+                <div class="vb-invoice-addresses">
+                    <div>
+                        <h3>Billing Address</h3>
+                        <p><strong>{{ customer.name }}</strong></p>
+                        <p>{{ billing_address.address_line_1 }}</p>
+                        <p>{{ billing_address.address_line_2|default:"" }}</p>
+                        <p>{{ billing_address.city }}, {{ billing_address.state }}</p>
+                        <p>{{ billing_address.country }} - {{ billing_address.postal_code }}</p>
+                        <p>{{ customer.email }}</p>
+                        <p>{{ customer.mobile }}</p>
+                    </div>
+                    <div>
+                        <h3>Shipping Address</h3>
+                        <p><strong>{{ customer.name }}</strong></p>
+                        <p>{{ shipping_address.address_line_1 }}</p>
+                        <p>{{ shipping_address.address_line_2|default:"" }}</p>
+                        <p>{{ shipping_address.city }}, {{ shipping_address.state }}</p>
+                        <p>{{ shipping_address.country }} - {{ shipping_address.postal_code }}</p>
+                        <p>{{ customer.mobile }}</p>
+                    </div>
+                </div>
+
+                <div class="vb-invoice-table">
+                    <div class="vb-invoice-table-head">
+                        <div>Product</div>
+                        <div>Qty</div>
+                        <div>Price</div>
+                        <div>Total</div>
+                    </div>
+
+                    {% for item in order_items %}
+                    <div class="vb-invoice-table-row">
+                        <div>
+                            <strong>{{ item.product.name }}</strong><br>
+                            <small>{{ item.product.product_code }}</small>
+                        </div>
+                        <div>{{ item.quantity }}</div>
+                        <div>₹{{ item.price|floatformat:2|intcomma }}</div>
+                        <div>₹{{ item.total|floatformat:2|intcomma }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="vb-invoice-total">
+                    <div>
+                        <span>Subtotal</span>
+                        <strong>₹{{ order.subtotal|floatformat:2|intcomma }}</strong>
+                    </div>
+                    <div>
+                        <span>Shipping</span>
+                        <strong>₹{{ order.shipping|floatformat:2|intcomma }}</strong>
+                    </div>
+                    <div class="grand-total">
+                        <span>Total</span>
+                        <strong>₹{{ order.total|floatformat:2|intcomma }}</strong>
+                    </div>
+                </div>
+                <div class="vb-invoice-note">
+                    <p>Thank you for shopping with Vedabrass.</p>
+                    <small>This is a system-generated invoice.</small>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

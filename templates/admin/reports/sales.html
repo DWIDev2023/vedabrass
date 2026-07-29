@@ -1,0 +1,94 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vedabrass | Sales Report{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section reports-page">
+        <div class="category-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Sales Report</h2>
+                    <p class="text-muted">Daily revenue, paid orders and average order value.</p>
+                </div>
+                <a href="{% url 'AdminReports' user.unique_code %}" class="btn-primary">Back to Reports</a>
+            </div>
+
+            <form method="GET" class="report-filter-card">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                    </div>
+                    <button type="submit" class="btn-primary">Apply</button>
+                </div>
+            </form>
+
+            <div class="report-card-grid">
+                <div class="report-card">
+                    <span>Total Revenue</span>
+                    <strong>₹{{ total_revenue|floatformat:2|intcomma }}</strong>
+                </div>
+
+                <div class="report-card">
+                    <span>Paid Orders</span>
+                    <strong>{{ total_orders }}</strong>
+                </div>
+
+                <div class="report-card">
+                    <span>Average Order Value</span>
+                    <strong>₹{{ avg_order_value|floatformat:2|intcomma }}</strong>
+                </div>
+
+                <div class="report-card">
+                    <span>Shipping Revenue</span>
+                    <strong>₹{{ shipping_revenue|floatformat:2|intcomma }}</strong>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Daily Sales</h3>
+                <div class="report-export-actions">
+                    <button type="button" class="export-btn" data-export="csv">CSV</button>
+                    <button type="button" class="export-btn" data-export="excel">Excel</button>
+                    <button type="button" class="export-btn" data-export="copy">Copy</button>
+                    <button type="button" class="export-btn" data-export="print">Print</button>
+                </div>
+                <div class="category-table eport-export-table" style="--table-columns: 1fr 1fr 1fr 1fr;">
+                    <div class="table-head">
+                        <div>Date</div>
+                        <div>Orders</div>
+                        <div>Revenue</div>
+                        <div>Average Order</div>
+                    </div>
+                    {% for row in daily_sales %}
+                    <div class="table-row">
+                        <div>{{ row.day|date:"d M Y" }}</div>
+                        <div>{{ row.orders }}</div>
+                        <div>₹{{ row.revenue|floatformat:2|intcomma }}</div>
+                        <div>₹{{ row.avg_order|floatformat:2|intcomma }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="table-row">
+                        <div>No sales found for selected date range.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

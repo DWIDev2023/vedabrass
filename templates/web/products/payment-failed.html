@@ -1,0 +1,30 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <section class="vb-payment-failed">
+        <div class="vb-failed-card">
+            <div class="vb-failed-icon">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <span class="vb-failed-tag">Payment Unsuccessful</span>
+            <h1>We Couldn't Complete Your Payment</h1>
+            <p>Your order has been saved successfully, but the payment was not completed. You can retry the payment using the button below.</p>
+            <div class="vb-failed-summary">
+                <div>
+                    <span>Order ID</span>
+                    <strong>{{ order.order_id }}</strong>
+                </div>
+                <div>
+                    <span>Amount</span>
+                    <strong>₹{{ order.total|floatformat:2|intcomma }}</strong>
+                </div>
+            </div>
+            <div class="vb-failed-actions">
+                <a href="{% url 'PayURedirect' order.order_id %}" class="vb-retry-btn">Retry Payment</a>
+                <a href="{% url 'Contact' %}" class="vb-contact-btn">Contact Support</a>
+            </div>
+            <small>If money was deducted but the payment failed, please contact our support team with your Order ID.</small>
+        </div>
+    </section>
+{% endblock %}

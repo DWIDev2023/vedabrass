@@ -1,0 +1,42 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>{{ category.name }}</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <a href="{% url 'Categories' %}">All Categories</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>{{ category.name }}</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="subcategory-section">
+        <div class="section-header">
+            <h2>Explore Subcategories</h2>
+            <p>Discover divine brass artistry crafted for every tradition and space.</p>
+        </div>
+
+        <div class="subcategory-grid">
+            {% for subcategory in subcategories %}
+            <a href="{% url 'Collections' subcategory.slug %}" class="subcategory-card">
+                <div class="subcategory-image">
+                    {% if subcategory.image %}
+                    <img src="{{ subcategory.image.url }}" alt="{{ subcategory.name }}">
+                    {% endif %}
+                </div>
+                <div class="subcategory-content">
+                    <span class="subcategory-label">Collection</span>
+                    <h3>{{ subcategory.name }}</h3>
+                    <p>Explore handcrafted premium brass collections.</p>
+                    <span class="subcategory-link">View Collections</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

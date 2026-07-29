@@ -1,0 +1,56 @@
+{% extends "layouts/web.html" %}
+{% load static %}
+{% block content %}
+    <section class="breadcrumb-hero">
+        <div class="breadcrumb-overlay"></div>
+        <div class="breadcrumb-content">
+            <h1>Shipping Policy</h1>
+            <nav class="breadcrumb-nav">
+                <a href="{% url 'Welcome' %}">Home</a>
+                <span><i class="fa-solid fa-long-arrow-right"></i></span>
+                <strong>Shipping Policy</strong>
+            </nav>
+        </div>
+    </section>
+
+    <section class="policy-section">
+        <div class="policy-container">
+            <div class="policy-card">
+                <span class="section-tag">Vedabrass Policy</span>
+                <h2>Shipping Policy</h2>
+                <p>At <a href="https://www.vedabrass.com">www.vedabrass.com</a>, every product is thoughtfully handcrafted by skilled artisans across India using traditional craftsmanship techniques. Since our products are handmade and not mass-produced, slight variations in finish, texture, and appearance may naturally occur, making each piece unique.</p>
+                <h3>Order Processing</h3>
+                <p>Once your order is placed, our team carefully prepares, quality-checks, and securely packages the products before dispatch.</p>
+                <p>Most ready-to-ship orders are dispatched within 48 business hours after order confirmation. Orders placed on weekends or public holidays will be processed on the next working day.</p>
+                <p>For made-to-order or customized products, estimated preparation timelines will be mentioned on the respective product page.</p>
+                <h3>Shipping &amp; Delivery Timeline</h3>
+                <p>Most orders are delivered within 7-10 business days depending on the shipping location, product availability, and courier service timelines.</p>
+                <p>Business days refer to Monday through Friday, excluding public holidays.</p>
+                <p>Delivery timelines may occasionally vary due to unforeseen circumstances such as weather conditions, courier delays, regional restrictions, festivals, or operational challenges.</p>
+                <h3>Order Tracking</h3>
+                <p>Once your order is dispatched, you will receive a confirmation email and SMS containing your shipment tracking details and AWB number.</p>
+                <p>You can use the provided tracking link to monitor the current status and location of your shipment.</p>
+                <h3>Shipping Address Responsibility</h3>
+                <p>Customers are requested to provide complete and accurate shipping details, including full address, postal/ZIP code, landmark, and active mobile number, to ensure smooth delivery.</p>
+                <p>Vedabrass shall not be responsible for delays or failed deliveries caused by incorrect, incomplete, or insufficient shipping information provided by the customer.</p>
+                <h3>Delivery Attempts</h3>
+                <p>Our delivery partners generally attempt delivery up to three times. If the shipment remains undelivered after multiple attempts or is refused by the recipient, the package may be returned to us and the order may be treated as cancelled.</p>
+                <h3>Delays &amp; Exceptional Situations</h3>
+                <p>While we strive to deliver all orders within the communicated timelines, certain situations beyond our control may occasionally cause delays.</p>
+                <p>In such cases, our support team will stay in touch with you and provide shipment updates whenever required.</p>
+                <h3>Cancellation Policy</h3>
+                <p>Orders once shipped cannot be cancelled.</p>
+                <p>Prepaid orders cannot be cancelled after successful order confirmation and processing.</p>
+                <h3>Returns, Exchanges &amp; Sale Orders</h3>
+                <p>Products purchased during sale periods, promotional campaigns, or discounted offers are not eligible for return or exchange unless the product received is damaged or incorrect.</p>
+                <p>Products purchased before a sale or discount period cannot be exchanged during an ongoing sale event.</p>
+                <h3>Failed Deliveries &amp; Reverse Shipping Charges</h3>
+                <p>In cases where orders are returned due to incorrect shipping details, incomplete address information, failed delivery attempts, or refusal to accept the package, applicable reverse shipping and handling charges may be deducted from the refundable amount.</p>
+                <h3>Damaged or Incorrect Products</h3>
+                <p>If you receive a damaged, defective, or incorrect product, please contact our support team within 48 hours of delivery along with clear photos and order details for assistance.</p>
+                <h3>Contact Us</h3>
+                <p>For shipping-related questions or support, please contact us at <a href="mailto:support@vedabrass.com">support@vedabrass.com</a>.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

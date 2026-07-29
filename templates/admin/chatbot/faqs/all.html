@@ -1,0 +1,78 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Chat FAQs{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">All FAQs ({{ total_faqs }})</h2>
+                <a href="{% url 'AdminAddFaq' user.unique_code %}" class="btn-primary">+ Add FAQ</a>
+            </div>
+            <input type="text" id="faqSearch" placeholder="Search FAQ..." class="search-input">
+            <div class="category-table product-table">
+                <div class="table-head product-head">
+                    <div>Category</div>
+                    <div>Question</div>
+                    <div>Product</div>
+                    <div>Keywords</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                {% for faq in faqs %}
+                <div class="table-row faq-row">
+                    <div>{{ faq.category }}</div>
+                    <div>{{ faq.question|truncatechars:70 }}</div>
+                    <div>
+                        {% if faq.product %}
+                        {{ faq.product.name|truncatechars:35 }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </div>
+                    <div>{{ faq.keywords|default:"—"|truncatechars:50 }}</div>
+                    <div>
+                        {% if faq.is_active %}
+                        <span class="status active">Active</span>
+                        {% else %}
+                        <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        <a href="{% url 'AdminUpdateFaq' faq.unique_code %}" class="btn-edit"><i class="fa-solid fa-edit"></i></a>
+                        <a href="javascript:void(0)" class="btn-delete" data-id="{{ faq.unique_code }}" data-name="{{ item.question }}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row product-row">
+                    <div style="grid-column: span 6; text-align:center;">No FAQs found.</div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete FAQ</h3>
+                        <p id="deleteText">Are you sure you want to delete selected faq?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteFaq' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="faq_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

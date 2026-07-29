@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ meta_description|default:'' }}">
+    <meta name="keywords" content="{{ meta_keywords|default:'' }}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="author" content="Doc Web India">
+    <title>{{ meta_title|default:'' }}</title>
+
+    <meta property="og:url" content="{{ canonical_url }}" />
+    <meta property="og:site_name" content="VedaBrass" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ meta_title|default:'' }}" />
+    <meta property="og:description" content="{{ meta_description|default:'' }}" />
+    <meta property="og:image" content="{% static 'front/images/logo.png' %}" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="{{ request.get_host }}" />
+    <meta property="twitter:url" content="{{ canonical_url }}" />
+    <meta name="twitter:title" content="{{ meta_title|default:'' }}" />
+    <meta name="twitter:description" content="{{ meta_description|default:'' }}" />
+    <meta name="twitter:image" content="{% static 'front/images/logo.png' %}" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'front/images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'front/images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'front/images/favicon.png' %}">
+    <link rel="canonical" href="{{ canonical_url }}" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'front/css/styling.css' %}">
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5B5F5B9P');</script>
+    <!-- End Google Tag Manager -->
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5B5F5B9P"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+     
+    <header>
+        <div class="navbar" id="navbar">
+            <div class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            <a href="{% url 'Welcome' %}" class="logo">
+                <img src="{% static 'front/images/logo.png' %}" alt="Handcrafted brass products by VedaBrass for home, temple and daily use">
+            </a>
+
+            <div class="nav-links" id="nav">
+                <div class="nav-item"><a href="{% url 'Welcome' %}">Home</a></div>
+                <div class="nav-item">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Idols &amp; Statues</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="mega">
+                        <div class="mega-grid idols-mega-grid">
+                            <div class="mega-column god-column">
+                                <h4>Shop By God</h4>
+                                <div class="god-links">
+                                    {% for item in menu_gods %}
+                                    <a href="{% url 'ProductsByCollection' item.slug %}">{{ item.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mega-column">
+                                <h4>Shop By Goddess</h4>
+                                {% for item in menu_goddess %}
+                                <a href="{% url 'ProductsByCollection' item.slug %}">{{ item.name }}</a>
+                                {% endfor %}
+                            </div>
+                            <div class="mega-column">
+                                <h4>Popular</h4>
+                                {% for item in menu_popular %}
+                                <a href="{% url 'Collections' item.slug %}">{{ item.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Home Decor</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        {% for item in menu_home_decore %}
+                        <a href="{% url 'ProductsBySubcategory' item.slug %}">{{ item.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Pooja Essentials</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        {% for item in menu_pooja_essentials %}
+                        <a href="{% url 'ProductsBySubcategory' item.slug %}">{{ item.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Kitchen Essentials</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        {% for item in menu_home_essentials %}
+                        <a href="{% url 'ProductsBySubcategory' item.slug %}">{{ item.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>More</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'Subcategory' 'gifting-items' %}">Gifting Items</a>
+                        <a href="{% url 'ProductsByCategory' 'new-arrivals' %}">New Arrivals</a>
+                    </div>
+                </div>
+            </div>
+            <div class="icons">
+                <a href="javascript:void(0);" class="icon" id="searchTrigger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </a>
+                <a href="{% url 'TrackOrder' None %}" class="icon"><i class="fa-regular fa-user"></i></a>
+                <a href="{% url 'Carts' %}" class="icon"><i class="fa-solid fa-bag-shopping"></i><span class="count" id="cartCount">{{ cart_count|default:0 }}</span></a>
+            </div>
+        </div>
+
+        <div class="search-overlay" id="searchOverlay">
+            <div class="close-btn" onclick="closeSearch()"><i class="fa-solid fa-close"></i></div>
+            <div class="search-container">
+                <form class="search-form" method="GET" action="{% url 'SearchProducts' %}">
+                    <div class="search-box">
+                        <input type="text" name="productquery" placeholder="Search for products..." autofocus required/>
+                        <button type="submit" class="search-submit">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col brand">
+                <a href="{% url 'Welcome' %}" class="logo">
+                    <img src="{% static 'front/images/logo.png' %}" alt="Explore handcrafted brass idols, decor and spiritual gifts by VedaBrass"> 
+                </a>
+                <p>We specialize in exquisite brass handicrafts that embody divine beauty and spiritual tranquility.</p>
+                <div class="contact">
+                    <a href="mailto:hello@vedabrass.com">hello@vedabrass.com</a>
+                    <a href="tel:+918712495444">+91 87124 95444</a>
+                </div>
+                <div class="socials">
+                    <a href="https://www.facebook.com/vedabrassofficial" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="fa-brands fa-facebook" title="Facebook"></i></a>
+                    <a href="https://www.instagram.com/vedabrassofficial/" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="fa-brands fa-instagram" title="Instagram"></i></a>
+                    <a href="https://www.youtube.com/@VedabrassOfficial" target="_blank" rel="noopener noreferrer" title="YouTube"><i class="fa-brands fa-youtube" title="YouTube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="{% url 'Categories' %}">All Categories</a></li>
+                    <li><a href="{% url 'Products' %}">Products</a></li>
+                    <li><a href="{% url 'Contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'ShippingPolicy' %}">Shipping Policy</a></li>
+                    <li><a href="{% url 'ReturnPolicy' %}">Return Policy</a></li>
+                    <li><a href="{% url 'PrivacyPolicy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'TermsUse' %}">Terms &amp; Conditions</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Discover</h4>
+                <ul>
+                    <li><a href="{% url 'WhoWeAre' %}">Who We Are</a></li>
+                    <li><a href="{% url 'Subcategory' 'idols-and-statues' %}">Idols &amp; Statues</a></li>
+                    <li><a href="{% url 'Subcategory' 'home-decor' %}">Home Decor</a></li>
+                    <li><a href="{% url 'Subcategory' 'pooja-essentials' %}">Pooja Essentials</a></li>
+                    <li><a href="{% url 'Subcategory' 'kitchen-essentials' %}">Kitchen Essentials</a></li>
+                    <li><a href="{% url 'Subcategory' 'gifting-items' %}">Gifting Items</a></li>
+                    <li><a href="{% url 'ProductsPremiumCollection' %}">Premium Collection</a></li>
+                </ul>
+            </div>
+            <div class="footer-col newsletter">
+                <h4>Newsletter</h4>
+                <p>Get updates on new collections &amp; offers.</p>
+                <form method="POST" class="newsletter-box" action="{% url 'Subscribe' %}">
+                    {% csrf_token %}
+                    <input type="email" name="semail" placeholder="Enter your email">
+                    <button type="submit">Subscribe</button>
+                </form>
+
+                <div class="special-links">
+                    <ul>
+                        <li><a href="{% url 'CuratedBundles' %}">Curated Brass Bundles</a></li>
+                        <li><a href="{% url 'Blogs' %}">Brass Journal</a></li>
+                        <li><a href="{% url 'NewsEvents' %}">News &amp; Events</a></li>
+                        <li><a href="{% url 'Faqs' %}">FAQs</a></li>
+                        <li><a href="{% url 'Reviews' %}">Reviews</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026. All Rights Reserved | Made with <i class="fa-solid fa-heart text-danger"></i> by <a href="https://docwebindia.com/" target="_blank" rel="noopener noreferrer" title="Doc Web India">Doc Web India</a></p>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Go to top"><i class="fa-solid fa-angle-up"></i></button>
+
+    <a href="{% url 'CuratedBundles' %}" class="buy-together-focus">
+        <span class="cta-inner">
+            <span class="focus-text">Buy Together <i class="fa-solid fa-angle-right"></i></span>
+        </span>
+    </a>
+
+    <div id="cartToast" class="cart-toast">
+        <i class="fa-solid fa-check"></i>
+        <span>Product added to cart</span>
+        <a href="{% url 'Carts' %}">View Cart</a>
+    </div>
+
+    <script src="{% static 'front/js/custom.js' %}"></script>
+</body>
+</html>

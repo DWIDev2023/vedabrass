@@ -1,0 +1,84 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | All Orders{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">All Orders</h2>
+            </div>
+            <input type="text" id="orderSearch" placeholder="Search orders..." class="search-input" />
+            <div class="category-table">
+                <div class="table-head">
+                    <div>Order ID</div>
+                    <div>Customer</div>
+                    <div>Mobile</div>
+                    <div>Items</div>
+                    <div>Total</div>
+                    <div>Status</div>
+                    <div>Date</div>
+                    <div>Actions</div>
+                </div>
+                {% for order in orders %}
+                <div class="table-row order-row">
+                    <div><strong>{{ order.order_id }}</strong><br></div>
+                    <div>{{ order.customer.name }}</div>
+                    <div>{{ order.customer.mobile }}</div>
+                    <div>{{ order.items.count }}</div>
+                    <div>₹{{ order.total }}</div>
+                    <div><span class="status-badge {{ order.status|lower }}">{{ order.status }}</span></div>
+                    <div>{{ order.created_at|date:"d M Y" }}</div>
+                    <div class="actions">
+                        <a href="{% url 'AdminViewOrder' code=user.unique_code cid=order.unique_code %}" class="btn-edit" title="View Order Details"><i class="fa-solid fa-eye"></i></a>
+                        <a href="{% url 'AdminEditOrder' order.unique_code %}" class="btn-edit" title="Edit Order"><i class="fa-solid fa-edit"></i></a>
+                        <a href="#" data-id="{{ order.unique_code }}" data-name="{{ order.order_id }}" class="btn-cancel" title="Cancel Order"><i class="fa-solid fa-close"></i></a>
+                        <a href="#" data-id="{{ order.unique_code }}" data-name="{{ order.order_id }}" class="btn-delete" title="Delete Order"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row">
+                    <div style="grid-column: span 8; text-align:center; color:var(--text-muted);">No orders found.</div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="cancelModal">
+                    <div class="modal-box">
+                        <h3>Cancel Order</h3>
+                        <p id="cancelText">Are you sure you want to cancel this order?</p>
+                        <form method="POST" id="cancelForm" action="{% url 'AdminCancelOrder' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" id="cancelCategoryId">
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Cancel</button>
+                                <button type="button" class="btn-secondary" id="cancelCancel">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Order</h3>
+                        <p id="deleteText">Are you sure you want to delete this order?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteOrder' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" id="deleteCategoryId">
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

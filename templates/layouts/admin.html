@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block description %}{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}{% endblock %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="author" content="Doc Web India">
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'back/images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'back/images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'back/images/favicon.png' %}">
+    <link rel="canonical" href="" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'back/css/styling.css' %}">
+</head>
+<body>
+    <header>
+        <div class="navbar" id="navbar">
+            <div class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            <a href="{% url 'AdminDashboard' user.unique_code %}" class="logo">
+                <img src="{% static 'back/images/logo.png' %}" alt="Logo">
+            </a>
+
+            <div class="nav-links" id="nav">
+                <div class="nav-item"><a href="{% url 'AdminDashboard' user.unique_code %}">Dashboard</a></div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Customers</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'AdminOrders' user.unique_code %}">All Orders</a>
+                        <a href="{% url 'AdminCustomers' user.unique_code %}">All Customers</a>
+                        <a href="{% url 'AdminProductReviews' user.unique_code %}">All Product Reviews</a>
+                        <a href="{% url 'AdminContacts' user.unique_code %}">All Contacts</a>
+                        <a href="{% url 'AdminNewsletterSubscribers' user.unique_code %}">All Subscribers</a>
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Vendors</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'AdminNewVendor' user.unique_code %}">Add New Vendor</a>
+                        <a href="{% url 'AdminVendors' user.unique_code %}">View Vendors</a>
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Categories</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'AdminNewCategory' user.unique_code %}">Add New Category</a>
+                        <a href="{% url 'AdminCategories' user.unique_code %}">View Categories</a>
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Products</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'AdminAddProduct' user.unique_code %}">Add New Product</a>
+                        <a href="{% url 'AdminProducts' user.unique_code %}">View All</a>
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Blogs</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'AdminBlogs' user.unique_code %}">All Blogs</a>
+                        <a href="{% url 'AdminBlogCategories' user.unique_code %}">Blog Categories</a>
+                        <a href="{% url 'AdminAddNewBlog' user.unique_code %}">Add New Blog</a>
+                        <a href="{% url 'AdminMedias' user.unique_code %}">News &amp; Events</a>
+                        <a href="{% url 'AdminAddMedia' user.unique_code %}">Add New Media</a>
+                    </div>
+                </div>
+                <div class="nav-item"><a href="{% url 'AdminNotifications' user.unique_code %}">Notifications</a></div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Reports</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'AdminReports' user.unique_code %}">Overview</a>
+                        <a href="{% url 'AdminReportsInsights' user.unique_code %}">Insights</a>
+                        <a href="{% url 'AdminReportsSales' user.unique_code %}">Sales</a>
+                        <a href="{% url 'AdminReportsOrders' user.unique_code %}">Orders</a>
+                        <a href="{% url 'AdminReportsCustomers' user.unique_code %}">Customers</a>
+                        <a href="{% url 'AdminReportsProducts' user.unique_code %}">Products</a>
+                        <a href="{% url 'AdminReportsPayments' user.unique_code %}">Payments</a>
+                        <a href="{% url 'AdminReportsShipments' user.unique_code %}">Shipments</a>
+                        <a href="{% url 'AdminReportsNotifications' user.unique_code %}">Notifications</a>
+                        <a href="{% url 'AdminReportsChatbot' user.unique_code %}">Chatbot Analytics</a>
+                    </div>
+                </div>
+                <div class="nav-item has-dropdown">
+                    <a href="javascript:void(0);" class="nav-link">
+                        <span>Chat Engine</span>
+                        <span class="arrow">+</span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="{% url 'AdminChatKeywords' user.unique_code %}">Chat Keywords</a>
+                        <a href="{% url 'AdminAddChatKeywords' user.unique_code %}">Add Chat Keyword</a>
+                        <a href="{% url 'AdminFaqs' user.unique_code %}">FAQS</a>
+                        <a href="{% url 'AdminAddFaq' user.unique_code %}">Add FAQ</a>
+                        <a href="{% url 'AdminSuggestMap' user.unique_code %}">Suggestions</a>
+                        <a href="{% url 'AdminAddSuggestMap' user.unique_code %}">Map Suggestion</a>
+                        <a href="{% url 'AdminSupportTickets' user.unique_code %}">Support Tickets</a>
+                    </div>
+                </div>
+            </div>
+            <div class="icons">
+                <a href="{% url 'AdminAccSettings' user.unique_code %}" class="icon">
+                    <i class="fa-solid fa-cogs"></i>
+                </a>
+                <a href="{% url 'SignOut' %}" class="icon">
+                    <i class="fa-solid fa-sign-out"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>© 2026. All Rights Reserved | Made with <i class="fa-solid fa-heart text-danger"></i> by <a href="" target="_blank" rel="" title="Doc Web India">Doc Web India</a></p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'back/js/custom.js' %}"></script>
+</body>
+</html>

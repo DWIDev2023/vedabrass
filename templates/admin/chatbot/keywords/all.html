@@ -1,0 +1,75 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Chat Keywords{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="category-section">
+        <div class="category-container">
+            <div class="section-header">
+                <h2 class="section-title">Chat Keywords</h2>
+                <a href="{% url 'AdminAddChatKeywords' user.unique_code %}" class="btn-primary">+ Add Keyword</a>
+            </div>
+            <input type="text" id="keywordSearch" placeholder="Search keyword..." class="search-input">
+
+            <div class="category-table product-table">
+                <div class="table-head product-head">
+                    <div>Keyword</div>
+                    <div>Category</div>
+                    <div>Collection</div>
+                    <div>Tag</div>
+                    <div>Priority</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                {% for item in chat_keywords %}
+                <div class="table-row keywords-row">
+                    <div>{{ item.keyword }}</div>
+                    <div>{{ item.category.name|default:"-" }}</div>
+                    <div>{{ item.collection.name|default:"-" }}</div>
+                    <div>{{ item.tag.name|default:"-" }}</div>
+                    <div>{{ item.priority }}</div>
+                    <div>
+                        {% if item.is_active %}
+                        <span class="status active">Active</span>
+                        {% else %}
+                        <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        <a href="{% url 'AdminUpdateChatKeywords' item.unique_code %}" class="btn-edit"><i class="fa-solid fa-edit"></i></a>
+                        <a href="javascript:void(0)" class="btn-delete" data-id="{{ item.unique_code }}" data-name="{{ item.keyword }}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="table-row product-row">
+                    <div style="grid-column: span 7; text-align:center;">No keywords found.</div>
+                </div>
+                {% endfor %}
+                <div class="modal-overlay" id="deleteModal">
+                    <div class="modal-box">
+                        <h3>Delete Keyword</h3>
+                        <p id="deleteText">Are you sure you want to delete selected keyword?</p>
+                        <form method="POST" id="deleteForm" action="{% url 'AdminDeleteChatKeywords' user.unique_code %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="keyword_id" id="deleteCategoryId">
+
+                            <div class="modal-actions">
+                                <button type="submit" class="btn-primary">Yes, Delete</button>
+                                <button type="button" class="btn-secondary" id="cancelDelete">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

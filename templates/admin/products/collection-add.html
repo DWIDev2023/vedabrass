@@ -1,0 +1,49 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Add Products in Collection{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="collection-products-page">
+        <form id="collectionForm" method="POST" action="{% url 'AdminAddProductInCollection' collection.unique_code %}">
+            {% csrf_token %}
+            <div class="page-header">
+                <div>
+                    <span>Collection Products</span>
+                    <h2>{{ collection.name }}</h2>
+                    <p>Add or remove products for this collection.</p>
+                </div>
+
+                <button type="submit" form="collectionForm" class="save-btn">Save Changes</button>
+            </div>
+            
+            <div class="product-search">
+                <input type="text" id="adminProductSearch" placeholder="Search products...">
+            </div>
+            <div class="products-list">
+                {% for product in products %}
+                <label class="product-item">
+                    <input type="checkbox" name="products" value="{{ product.id }}" {% if product.id in selected_ids %}checked{% endif %}>
+                    <div class="product-image">
+                        {% if product.images.first %}
+                        <img src="{{ product.images.first.image.url }}" alt="">
+                        {% endif %}
+                    </div>
+                    <div class="product-details">
+                        <h4>{{ product.name }}</h4>
+                        <span>{{ product.collection.name }}</span>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </form>
+    </section>
+{% endblock %}

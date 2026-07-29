@@ -1,0 +1,73 @@
+{% extends "layouts/admin.html" %}
+{% load static %}
+{% block title %}Vedabrass | Add New Subcategory{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <section class="category-section">
+        <div class="category-container">
+            <h2 class="section-title">Add New Subcategory</h2>
+
+            <form class="category-form" method="POST" action="{% url 'AdminNewSubcategory' code=user.unique_code slug=category.slug %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Subcategory Name</label>
+                    <input type="text" id="subcategoryName" name="name" placeholder="Enter category name" required />
+                </div>
+                <div class="form-group">
+                    <label>Slug</label>
+                    <input type="text" id="subcategorySlug" name="slug" placeholder="Auto-generated or custom slug" required />
+                </div>
+                <div class="form-group full">
+                    <label>Subcategory Image</label>
+                    <div class="category-image-upload">
+                        <input type="file" id="subcategoryImageInput" name="image" accept="image/*" hidden required>
+                        <div class="category-upload-box" id="subcategoryImageBox">
+                            <span>Click to upload or drag & drop</span>
+                            <small>Only JPG 500x500 Resolution</small>
+                        </div>
+                        <div class="category-image-preview" id="subcategoryImagePreview">
+                            <img id="subcategoryPreviewImg" src="" alt="Preview">
+                            <button type="button" id="subcategoryImageRemove">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label>Description</label>
+                    <textarea rows="4" name="description" placeholder="Write a short description..."></textarea>
+                </div>
+                <div class="form-group full">
+                    <label>Meta Title</label>
+                    <input type="text" name="meta_title" placeholder="Enter meta title" />
+                </div>
+                <div class="form-group full">
+                    <label>Meta Description</label>
+                    <textarea rows="4" name="meta_description" placeholder="Enter meta description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Parent Category</label>
+                    <input type="text" name="parentName" value="{{ category.name }}" readonly />
+                    <input type="hidden" name="parent" value="{{ category.id }}" />
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="is_active" required>
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Subcategory</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
