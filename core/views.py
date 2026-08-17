@@ -3322,6 +3322,7 @@ def AdminAddProduct(request, code):
     weight = request.POST.get("weight") or None
     width = request.POST.get("width") or None
     height = request.POST.get("height") or None
+    length = request.POST.get("length") or None
 
     quantity = request.POST.get("quantity")
     low_stock_threshold = request.POST.get("low_stock_threshold") or 5
@@ -3407,6 +3408,8 @@ def AdminAddProduct(request, code):
                 "turtle": "34",
                 "horse": "35",
                 "rishi": "36",
+                "owl": "49",
+                "giraffe": "50",
             }
 
             scode = collection.scode if collection.scode else "00"
@@ -3446,6 +3449,7 @@ def AdminAddProduct(request, code):
                 category_ids.extend(list(child_ids))
 
             matching_products = Product.objects.filter(
+                vendor=vendor,
                 category_id__in=category_ids,
             ).exclude(
                 product_code__isnull=True
@@ -3458,23 +3462,36 @@ def AdminAddProduct(request, code):
             for old_product in matching_products:
                 old_code = old_product.product_code or ""
 
-                old_scode = old_code[-6:-4] if len(old_code) >= 6 else ""
+                # Product number is always the final 4 digits
+                if len(old_code) < 4:
+                    continue
+
+                # Check SCODE
+                old_scode = old_code[-6:-4]
 
                 if old_scode != scode:
                     continue
 
                 try:
                     old_pcode = int(old_code[-4:])
-                    max_pcode = max(max_pcode, old_pcode)
                 except (ValueError, TypeError):
                     continue
 
-            pcode = f"{max_pcode + 1:04}"
-            product_code = f"{base_code}{pcode}"
+                max_pcode = max(
+                    max_pcode,
+                    old_pcode
+                )
 
-            if Product.objects.filter(product_code=product_code).exists():
-                messages.error(request, "Product code already exists.")
-                return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+            next_pcode = max_pcode + 1
+
+            while True:
+                pcode = f"{next_pcode:04}"
+                product_code = f"{base_code}{pcode}"
+
+                if not Product.objects.filter(product_code=product_code).exists():
+                    break
+
+                next_pcode += 1
             
             final_category_id = subcategory_id or category_id
             category = get_object_or_404(Category, id=final_category_id)
@@ -3492,6 +3509,7 @@ def AdminAddProduct(request, code):
                 weight=Decimal(weight) if weight else None,
                 width=Decimal(width) if width else None,
                 height=Decimal(height) if height else None,
+                # length=Decimal(length) if length else None,
                 description=description,
                 meta_title=meta_title,
                 meta_description=meta_description,
@@ -3599,9 +3617,10 @@ def AdminEditProduct(request, code):
             "parent_category": parent_category,
         }
         return render(request, 'admin/products/edit.html', context)
-    
+
     old_category_id = product.category_id
     old_collection_id = product.collection_id
+    old_vendor_id = product.vendor_id
 
     name = request.POST.get("name", "").strip()
     slug = request.POST.get("slug", "").strip()
@@ -3682,6 +3701,7 @@ def AdminEditProduct(request, code):
     should_regenerate_product_code = (
         old_category_id != category.id
         or old_collection_id != collection.id
+        or old_vendor_id != vendor.id
     )
 
     try:
@@ -3760,7 +3780,8 @@ def AdminEditProduct(request, code):
                     category_ids.extend(list(child_ids))
 
                 matching_products = Product.objects.filter(
-                    category_id__in=category_ids
+                    vendor=vendor,
+                    category_id__in=category_ids,
                 ).exclude(
                     id=product.id
                 ).exclude(
@@ -3784,8 +3805,22 @@ def AdminEditProduct(request, code):
                     except (ValueError, TypeError):
                         continue
 
-                pcode = f"{max_pcode + 1:04}"
-                product.product_code = f"{base_code}{pcode}"
+                next_pcode = max_pcode + 1
+
+                while True:
+                    pcode = f"{next_pcode:04}"
+                    new_product_code = f"{base_code}{pcode}"
+
+                    if not Product.objects.filter(
+                        product_code=new_product_code
+                    ).exclude(
+                        id=product.id
+                    ).exists():
+                        break
+
+                    next_pcode += 1
+
+                product.product_code = new_product_code
             
             product.category = category
             product.collection = collection
@@ -3797,7 +3832,7 @@ def AdminEditProduct(request, code):
             product.weight = Decimal(weight) if weight else None
             product.height = Decimal(height) if height else None
             product.width = Decimal(width) if width else None
-            product.length = Decimal(length) if length else None
+            # product.length = Decimal(length) if length else None
             product.description = description
             product.meta_title = meta_title
             product.meta_description = meta_description
